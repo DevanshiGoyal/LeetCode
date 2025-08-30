@@ -30,32 +30,24 @@ public:
         
     }
     int makeConnected(int n, vector<vector<int>>& connections) {
+
+        if(connections.size() < n-1) return -1 ;
+
         parent.resize(n);
         rank.resize(n, 0);
         for (int i = 0; i < n; ++i) parent[i] = i;
 
-        int cnt = 0 ;
+        int components = n ;
         for(auto& x : connections){
             int u = x[0];
             int v = x[1];
             int u_parent = find(u) ;
             int v_parent = find(v) ;
-            if(u_parent == v_parent) cnt++ ; // redundant connection
+            if(u_parent != v_parent) components-- ; 
             Union(u , v) ;
         }
                 
-            
-        
-        int we = -1;
-        for(int i = 0; i < n; i++){
-            if(parent[i] == i) we++;
-        }
-        if(cnt >= we ){
-            return we;
-        }else{
-            return -1;
-        }    
-
+        return components -1 ;
 
         
     }
