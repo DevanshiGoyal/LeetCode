@@ -1,31 +1,28 @@
 class Solution {
 public:
-    // Function to remove outermost parentheses of every primitive string in the
-    // decomposition of s
     string removeOuterParentheses(string s) {
-        string result;   // To store the final result
-        int balance = 0; // To keep track of the balance of parentheses
-
-        // Iterate through each character in the string
-        for (int i = 0; i < s.size(); i++) {
-            if (s[i] == '(') {
-                // If balance is greater than 0, it means this '(' is not an
-                // outermost parenthesis
-                if (balance > 0) {
-                    result += s[i]; // Add the character to the result
-                }
-                balance++; // Increase the balance for '('
+        int left = 0, right = 0;
+        string ans = "";
+        int n = s.length(), cnt = 0;
+        
+        while (right < n) {
+            if (s[right] == '(') {
+                cnt++;
             } else {
-                balance--; // Decrease the balance for ')'
-                // If balance is greater than 0, it means this ')' is not an
-                // outermost parenthesis
-                if (balance > 0) {
-                    result += s[i]; // Add the character to the result
+                cnt--;
+            }
+            
+            if (cnt == 0) {
+                if (left <= right) {
+                    ans += s.substr(left + 1, right - left - 1);
+                    right++;
+                    left = right;
+                    continue;
                 }
             }
+            right++;
         }
-
-        return result; // Return the final result after removing outermost
-                       // parentheses
+        
+        return ans;
     }
 };
