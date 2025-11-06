@@ -52,12 +52,42 @@ int memo(int i , int j , int  n , vector<vector<int>>& triangle , vector<vector<
         return dp[0][0] ;
     }
 
+    // space optimization 
+    //  instead of storing the triangle we need to store two rows --> front and curr rows
+
+        int spaceOpt(int n , vector<vector<int>>& triangle , vector<vector<int>>& dp ){
+        //  base case
+        vector<int> front(n , 0) ; 
+        for(int j = 0 ; j<n ; j++){
+            front[j] = triangle[n-1][j];
+        }
+        vector<int> curr(n , 0) ;
+        for( int i = n-2 ; i>=0 ; i--){
+            for(int j = 0 ; j<=i ; j++ ){
+                // go directly down
+                int down = triangle[i][j] + front[j] ;
+                // go diagonally down
+                int diag = triangle[i][j] + front[j+1] ;
+
+                curr[j] = min(down , diag) ;
+
+            }
+            front = curr ;
+        }
+        return front[0] ;
+    }
+    // tc--> O(n*n)
+    //sc--> O(n)
+
+
+
     int minimumTotal(vector<vector<int>>& triangle) {
         int n = triangle.size();
         vector<vector<int>> dp( n , vector<int>(n , -1));
         //return recursion( 0 , 0 , n , triangle)  ;  
         //return memo( 0 , 0 , n , triangle , dp)  ; 
-        return tabulation( n , triangle , dp)  ; 
+        //return tabulation( n , triangle , dp)  ; 
+        return spaceOpt( n , triangle , dp);
 
 
          
