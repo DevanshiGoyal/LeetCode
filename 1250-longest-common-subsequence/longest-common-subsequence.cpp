@@ -1,25 +1,34 @@
 class Solution {
 public:
-    // by shifting of index
-    // Memoization
-    int lcsUtil(string &s1, string &s2,int i,int j,vector<vector<int>> &memo) {
-        if(i==0 || j==0){ // negative index
-            return 0;
-        }
-        if(memo[i][j]!=-1){
-            return memo[i][j];
-        }
-        if(s1[i-1] == s2[j-1]){
-            return memo[i][j]= 1+lcsUtil(s1,s2,i-1,j-1,memo);
-        }else{
-            return memo[i][j]= max(lcsUtil(s1,s2,i-1,j,memo) , lcsUtil(s1,s2,i,j-1,memo));
-        }
-    }
-    
+    // shifting of index by 1 
+    // tabulation 
+    // tc--->O(n*m)
+    // sc--->O(n*m)
     int longestCommonSubsequence(string text1, string text2) {
-        int m=text1.size(),n=text2.size();
-      
-        vector<vector<int>> dp(m+1 , vector<int>(n+1 , -1))  ;
-        return lcsUtil(text1,text2, m ,n, dp );
+        int n = text1.size();
+        int m = text2.size();
+
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, -1)); // Create a DP table
+
+        // base cases
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = 0;
+        }
+        for (int j = 0; j <= m; j++) {
+            dp[0][j] = 0;
+        }
+
+        // fill in the DP table to calc the length of LCS
+        for (int ind1 = 1; ind1 <= n; ind1++) {
+            for (int ind2 = 1; ind2 <= m; ind2++) {
+                if (text1[ind1 - 1] == text2[ind2 - 1])
+                    dp[ind1][ind2] = 1 + dp[ind1 - 1][ind2 - 1]; // Characters match, increment LCS length
+                else
+                    dp[ind1][ind2] = max(dp[ind1 - 1][ind2], dp[ind1][ind2 - 1]); // Characters don't match
+            }
+        }
+
+        return dp[n][m]; // Return the length of the Longest Common Subsequence
+            
     }
 };
