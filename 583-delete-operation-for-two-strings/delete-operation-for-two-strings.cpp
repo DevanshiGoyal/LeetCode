@@ -31,9 +31,13 @@ public:
 
 
     int minDistance(string word1, string word2){
-        int deletion = word1.length()-longestCommonSubsequence(word1 , word2);
-        int insertion = word2.length()-longestCommonSubsequence(word1 , word2);
-        return deletion+insertion;
+        int n = word1.length() ;
+        int m = word2.length() ;
+        //int deletion = word1.length()-longestCommonSubsequence(word1 , word2);
+        //int insertion = word2.length()-longestCommonSubsequence(word1 , word2);
+        //return deletion+insertion;
+
+        return n + m - 2 * longestCommonSubsequence(word1 , word2);
         
     }
 };
