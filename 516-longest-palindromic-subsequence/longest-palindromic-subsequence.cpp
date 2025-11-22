@@ -1,35 +1,47 @@
 class Solution {
-private:
-    int solveMem(string &text1,string &text2,int i,int j,vector<vector<int>>  &dp)
-    {
-        if(i==text1.length() || j==text2.length()) return 0;
+public:
+    // shifting of index by 1 
+    // tabulation 
+    // tc--->O(n*m)
+    // sc--->O(n*m)
+    
+    int longestCommonSubsequence(string text1, string text2) {
+        int n = text1.size();
+        int m = text2.size();
 
-        if(dp[i][j]!=-1) return dp[i][j];
+        vector<vector<int>> dp(n + 1, vector<int>(m + 1, -1)); // Create a DP table
 
-        int ans=0;
-
-        if(text1[i]==text2[j]) 
-        {
-            ans=1+solveMem(text1,text2,i+1,j+1,dp);
-        }else
-        {
-            ans=max(solveMem(text1,text2,i+1,j,dp),solveMem(text1,text2,i,j+1,dp));
+        // base cases
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = 0;
+        }
+        for (int j = 0; j <= m; j++) {
+            dp[0][j] = 0;
         }
 
-        return dp[i][j]=ans;
-    }    
+        // fill in the DP table to calc the length of LCS
+        for (int ind1 = 1; ind1 <= n; ind1++) {
+            for (int ind2 = 1; ind2 <= m; ind2++) {
+                if (text1[ind1 - 1] == text2[ind2 - 1])
+                    dp[ind1][ind2] = 1 + dp[ind1 - 1][ind2 - 1]; // Characters match, increment LCS length
+                else
+                    dp[ind1][ind2] = max(dp[ind1 - 1][ind2], dp[ind1][ind2 - 1]); // Characters don't match
+            }
+        }
+
+        return dp[n][m]; // return the length of the Longest Common Subsequence
+            
+    }
 
 
-public:
     int longestPalindromeSubseq(string s) {
 
-         string revstr=s;
-         reverse(revstr.begin(),revstr.end());
-         int n=s.length();
-         vector<vector<int>>  dp(n,vector<int>(n,-1));
-         return solveMem(s,revstr,0,0,dp);
+        string revstr=s;
+        reverse(revstr.begin(),revstr.end());
+            
+        return longestCommonSubsequence(s,revstr);
 
     }
 };
-//Time complexity: O(n^2)
-//Space complexity: O(n^2)
+
+
