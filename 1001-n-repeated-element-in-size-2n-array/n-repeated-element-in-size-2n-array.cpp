@@ -1,25 +1,22 @@
+// Intution
+//Since the array has size 2N and exactly one element is repeated N times, the moment we see an element for the second time, we already have our ans
+//So instead of counting everything, we can stop early as soon as repetition is detected
 class Solution {
 public:
     int repeatedNTimes(vector<int>& nums) {
-
+        
         int n = nums.size();
 
-        unordered_map<int ,  int> count;
+        unordered_map<int, int> mpp;
 
-        for(int i = 0 ; i<nums.size() ; i++ ){
-            count[nums[i]]++;
+        for(int i=0;i<n;i++)
+        {
+            if(mpp[nums[i]] == 0) mpp[nums[i]]++;
+            else return nums[i];
         }
 
-        int ans = -1;
-        for(auto pair: count){
-            int a = pair.first;
-            int b = pair.second;
-            if(b >= n/2){
-                ans = a;
-            }
-        }
-
-        return ans;
-        
+        return -1;
     }
 };
+
+//TC---> O(N)  SC--->O(N)
