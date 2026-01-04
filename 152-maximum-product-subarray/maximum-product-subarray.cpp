@@ -1,22 +1,26 @@
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-        // using two pointer method 
+        // brute force approach 
+        // generating all the subarrays 
+        // then finding the product ---> and then updating the maxProd 
+
+        // three loops ---> TC---> O(N^3) -> high  SC--->O(1) --->TLE
+        // need to optimise --->O(N^2)
         int n = nums.size();
-        int lp = 1, rp = 1;
-        int res = nums[0];
+        int maxProd = INT_MIN ;
+        for(int i = 0 ; i<n ; i++){
+            int prod = 1;
+            for(int j = i ; j<n ; j++){
+                
+                prod*= nums[j];
+                maxProd = max(prod , maxProd);
 
-        for (int i = 0; i < n; i++) {
-            lp = lp == 0 ? 1 : lp;
-            rp = rp == 0 ? 1 : rp;
-
-            lp *= nums[i];
-            rp *= nums[n - 1 - i];
-
-            res = max(res, max(lp, rp));
+            }
+            
         }
 
-        return res;
+        return maxProd ;
         
     }
 };
