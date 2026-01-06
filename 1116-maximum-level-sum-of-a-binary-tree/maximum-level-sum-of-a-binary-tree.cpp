@@ -11,43 +11,39 @@
  */
 class Solution {
 public:
-    int maxLevelSum(TreeNode* root) {
-        // approach
-        // using BFS traversal
-        // traverse each level and then find sum 
-        // update maxSum by comparing sum with prev max 
+    //Store level sums in map
+    map<int , int> mp ; //{level , sum}
 
+    void DFS(TreeNode* root , int currLevel){
+        if(!root) return ;
+
+        mp[currLevel] += root->val ;
+
+        DFS(root->left , currLevel+1);
+        DFS(root->right , currLevel+1);
+
+    }
+    int maxLevelSum(TreeNode* root) {
+        // approach 2
+        // using DFS traversal using a map
+        //mp[level] = sum of that level
+    
+        DFS(root , 1) ;
         int maxSum = INT_MIN ;
         int resultLevel = 0 ;
-        int currLevel = 1 ;
 
-        queue<TreeNode*> q ;
-        q.push(root);
-
-        while(!q.empty()){
-            int n = q.size();
-            int sum =  0;
-            while(n--){
-                TreeNode* node = q.front();
-                q.pop();
-
-                sum+=node->val ;
-
-                if(node->left){
-                    q.push(node->left);
-
-                }
-                if(node->right){
-                    q.push(node->right);
-
-                }
+        //Traverse map to find maximum
+        for(auto &it : mp) {
+            
+            int level = it.first;
+            int sum   = it.second;
+            
+            if(sum > maxSum) {
+                maxSum = sum;
+                resultLevel = level;
+                
+            
             }
-
-            if(sum>maxSum){
-                maxSum = sum ;
-                resultLevel = currLevel ;
-            }
-            currLevel ++ ;
         }
 
         return resultLevel;
@@ -56,4 +52,4 @@ public:
     }
 };
 
-//TC--->O(N)  SC---> O(N) (for queue)
+//TC--->O(N)    SC---> O(N) (map + recursion stack)
