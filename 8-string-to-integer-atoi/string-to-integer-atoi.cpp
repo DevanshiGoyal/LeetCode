@@ -15,7 +15,7 @@ public:
         }
 
         // we have reached end
-        if(i == n ) return 0 ;
+        if(i == n ) return 0 ; // only whitespace
 
         // handling sign 
         int sign = 1 ;
@@ -50,7 +50,7 @@ public:
         
 
         // return after applying sign 
-        return (res*sign);
+        return static_cast<int>(res*sign);
     }
 };
 
