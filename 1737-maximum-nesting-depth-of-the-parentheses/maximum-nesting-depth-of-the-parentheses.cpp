@@ -1,26 +1,20 @@
 class Solution {
 public:
     int maxDepth(string s) {
-        // stack based approach 
-        stack<char> st ;
-        int maxcount = 0 ;
-        
+        // space optimised approach 
+        // withou using stack using counter 
+        int op = 0 ; // track the count of opening brackets 
+        int maxi = 0 ;
         for(int i = 0 ; i<s.length() ; i++){
-            if(s[i] == '('){
-                st.push(s[i]);
-            }else if(s[i] == ')'){
-                int x = st.size();
-                maxcount = max(x , maxcount) ;
-                st.pop() ;             
-                
-            }
-            
-
+            if(s[i] == '(' ){
+                op++;
+                maxi = max(maxi , op);
+            }else if(s[i] == ')') op-- ;
         }
-        return maxcount ;
+        return maxi ;
         
-
         
     }
 };
-//TC-->O(N) SC-->O(N)
+
+// TC-->O(N) SC-->O(1)
