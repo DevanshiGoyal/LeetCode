@@ -1,25 +1,42 @@
 class Solution {
 public:
     string frequencySort(string s) {
-        //count
-        unordered_map<char, int> freq;
-        for (char c : s) {
-            freq[c]++;
+        // approach using  hashmap and priority queue
+
+        // count freq of each character 
+        unordered_map<char,int> mp;
+        for(auto x:s)
+            mp[x]++;
+        
+        //max heap store pairs (freq, char) so that the char with highest freq on top
+        priority_queue<pair<int,char>> pq;
+        
+        // pushing pairs into pq
+        for(auto x: mp)
+            pq.push(make_pair(x.second,x.first));
+        
+        // result string
+        s = "";
+        
+        while(!pq.empty())
+        {
+            //get top char
+            char c = pq.top().second;
+
+            // repeated freq no of times
+            for(int i = 0;i<pq.top().first;i++){
+                // add to string
+                s.push_back(c);
+
+            }
+            
+            //pop top element 
+            pq.pop();
         }
 
-        //Rank
-        vector<pair<char, int>> v(freq.begin(), freq.end());
-        sort(v.begin(), v.end(), [](const pair<char, int> a, const pair<char, int> b) {
-            return a.second > b.second;
-        });
-        //build
-        string result = "";
-        for (auto& p:v) {
-            result.append(p.second, p.first);
-        }
-        return result;
+        return s;
     }
 };
-//Time complexity: O(N + Klog K)
 
-//Space complexity: O(N + K)
+// TC : O(NlogK) N->length K-> unique char
+//SC : O(K) for storing freq map and pq
