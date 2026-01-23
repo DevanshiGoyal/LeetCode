@@ -1,33 +1,33 @@
 class Solution {
 public:
     vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
-        // Brute force approach
-        // using simplee iteration
-        vector<int> ans  ;
-        int cnt = 0 ;
-        for(int i = 0 ; i<nums1.size() ; i++){
-           
-            for(int j = 0 ; j<nums2.size()-1 ;j++){
+        // optimised using stack 
+        // monotonic decreasing 
 
-                if(nums1[i] == nums2[j]){
-                    for(int k = j ; k<nums2.size() ; k++){
-                        if(nums2[k]> nums1[i]){
-                            ans.push_back(nums2[k]);
-                            cnt+=1;
-                            break;
-                        }
-                    }
-                    if(cnt>0) break;
-                    
-                    
-                }
-                cnt = 0 ;
+        int n2 = nums2.size() ;
+        int n1 = nums1.size() ;
+        
+        stack<int> st ;
+
+        unordered_map<int,int>m;
+
+        for(int i = n2-1 ; i>=0 ; i--){
+            while(!st.empty() && nums2[i] >= st.top()){
+                st.pop() ;
+
             }
-            if(cnt == 0 ){
-                ans.push_back(-1);
+            if(st.empty()){
+                m[nums2[i]] = -1;
+            }else{
+                m[nums2[i]] = st.top();
             }
+            st.push(nums2[i]) ;
         }
-        return ans ;
+        vector<int> ans;
+        for(int i=0;i<nums1.size();i++){
+            ans.push_back(m[nums1[i]]);
+        }
+        return ans;
         
     }
 };
