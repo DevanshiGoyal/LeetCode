@@ -45,3 +45,5 @@ public:
         return ans ;
     }
 };
+//Tc - O(N) // as we only traversing the string for once
+//Sc - O(N) // as we will store maximum of n digits in our string
