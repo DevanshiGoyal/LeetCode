@@ -20,10 +20,10 @@ private:
         if (!node) return 0;
 
         int leftHeight = checkHeight(node->left);
-        if (leftHeight == -1) return -1;
+        if (leftHeight < 0 ) return -1;
 
         int rightHeight = checkHeight(node->right);
-        if (rightHeight == -1) return -1;
+        if (rightHeight < 0 ) return -1;
 
         if (abs(leftHeight - rightHeight) > 1) return -1;
 
