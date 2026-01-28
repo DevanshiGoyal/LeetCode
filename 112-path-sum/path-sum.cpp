@@ -11,37 +11,28 @@
  */
 class Solution {
 public:
-
-    void preOrder(TreeNode* root , bool& ans , int x , int sum){
-        if(root==nullptr) return ;
-
-        sum = sum+ root->val ;
-
-        if(!root->left &&!root->right && sum==x){
-            ans = true ;
-            return ;
+    bool preOrder(TreeNode* root , int targetSum , int sum){
+        if(root== NULL){
+            return false ;
         }
 
-        if(root->left){
-            preOrder(root->left , ans , x , sum) ;
+        sum+=root->val;
+
+        // if we reached leaf node 
+        if(!root->left && !root->right){
+            if(sum == targetSum) return true ;
+            else return false ;
         }
 
-        if(root->right){
-            preOrder(root->right, ans , x , sum) ;
-        }
+        bool leftSum = preOrder(root->left , targetSum , sum);
+        bool rightSum = preOrder(root->right , targetSum , sum);
 
-    
+        return (leftSum || rightSum) ;
+
     }
     bool hasPathSum(TreeNode* root, int targetSum) {
-        if(root==nullptr) return false ;
-        bool ans = false ;
-
         int sum = 0 ;
-
-        preOrder(root , ans , targetSum , sum) ;
-
-        return ans ;
-
-        
+        bool result = preOrder(root , targetSum , sum) ;        
+        return result ;
     }
 };
