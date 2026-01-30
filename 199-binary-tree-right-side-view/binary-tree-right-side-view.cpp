@@ -11,46 +11,20 @@
  */
 class Solution {
 public:
+    void dfs(TreeNode* root , int level , vector<int>&ans){
+        // using dfs 
+        if(!root) return ;
+        if(level == ans.size()) ans.push_back(root->val) ;
+
+        dfs(root->right , level+1 , ans ) ;
+        dfs(root->left , level+1 , ans ) ;
+    }
     vector<int> rightSideView(TreeNode* root) {
-
         vector<int> ans ;
-        //if(!root) return ans ;
 
-        // BFS  
-
-        queue<TreeNode*> q ;
-
-        if(root) q.push(root) ;
-
-        while(!q.empty()){
-            TreeNode* rightSide = nullptr;
-            int size = q.size() ;
-
-            for(int i = 0 ; i<size ; i++){
-                TreeNode* node = q.front() ;
-                q.pop() ;
-                if(node) {
-                    rightSide = node;
-
-                    if(node->left){
-                        q.push(node->left) ;
-                    }
-
-                    if(node->right){
-                        q.push(node->right) ;
-                    }
-
-                }
-            }
-            if(rightSide){
-                ans.push_back(rightSide->val);
-            }
-            
-        }
+        dfs(root , 0 , ans) ;
 
         return ans ;
         
     }
 };
-
-// TC-->O(n)  SC--> O(n)
