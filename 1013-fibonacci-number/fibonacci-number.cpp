@@ -1,16 +1,21 @@
 class Solution {
 public:
-    // using recursion
-    int fib(int n) {
-        if(n==0) return 0 ;
-        if(n==1) return 1 ;
+// using memoization
+    int solve(int n, vector<int>& dp) {
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        // overlapping subproblems -->memoization  
+        if (dp[n] != -1) return dp[n];
 
-        return fib(n-1) + fib(n-2)  ;
-        
+        return dp[n] = solve(n - 1, dp) + solve(n - 2, dp);
+    }
+
+    int fib(int n) {
+        vector<int> dp(n + 1, -1);
+        return solve(n, dp);
     }
 };
 /*
- TC---> O(2ⁿ) (exponential) Each fib(n) calls fib(n-1) and fib(n-2)
-The recursion tree roughly doubles at each level
- SC-->O(n)  recursion stack space 
- */
+TC  ---> O(n)
+SC  ---> O(n)  (dp array + recursion stack)
+*/
