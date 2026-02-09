@@ -1,24 +1,26 @@
 class Solution {
 public:
+//Approach-3 (Space Optimized Bottom Up - Converting Approach-2)
     int rob(vector<int>& nums) {
         int n = nums.size();
-
-        vector<int> t(n+1 , 0);
-        //t[i] = max stolen money till i house 
         // no house : i=0
-        t[0] = 0;
+        int prev2 = 0;
 
         // 1 house ; i=1
-        t[1] = nums[0];
+        int prev1 = nums[0];
+        
 
         for(int i = 2 ; i<=n ; i++){
-            int steal = nums[i-1] + t[i-2];
-            int skip = t[i-1];
+            int steal = nums[i-1] + prev2;
+            int skip = prev1;
 
-            t[i] = max(steal , skip);
+            int curr = max(steal , skip);
+
+            prev2 = prev1 ;
+            prev1 = curr ;
         }
 
-        return t[n] ;
+        return prev1 ;
         
     }
 };
