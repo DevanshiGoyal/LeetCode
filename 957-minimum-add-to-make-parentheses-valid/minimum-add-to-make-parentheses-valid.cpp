@@ -1,25 +1,18 @@
 class Solution {
 public:
     int minAddToMakeValid(string s) {
+        // optimal
+        int op= 0, add = 0;
 
-        stack<char> bkt;
-
-        for(char c : s){
-            if(c=='('){
-                bkt.push(c);
-            }else{
-                if(!bkt.empty() && bkt.top()=='(' ){
-                    bkt.pop();
-                }else{
-                    bkt.push(c);
-                }  
-
+        for (char c : s) {
+            if (c == '(') {
+                op++;
+            } else {
+                if (op > 0) op--;
+                else add++;
             }
-
         }
 
-        return bkt.size();
-
-        
+        return add + op;
     }
 };
