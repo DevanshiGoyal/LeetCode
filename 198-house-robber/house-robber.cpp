@@ -1,26 +1,28 @@
 class Solution {
 public:
-//Approach-3 (Space Optimized Bottom Up - Converting Approach-2)
-    int rob(vector<int>& nums) {
-        int n = nums.size();
-        // no house : i=0
-        int prev2 = 0;
+    // using recursion TLE
+    // now memoization
+    vector<int> dp;
+    int solve(vector<int>& nums , int i){
+        if(i>=nums.size()) return 0 ;
+        if (dp[i] != -1) return dp[i];
+        
+        int steal = nums[i]+solve(nums , i+2);
+        int skip = solve(nums, i+1);
 
-        // 1 house ; i=1
-        int prev1 = nums[0];
         
 
-        for(int i = 2 ; i<=n ; i++){
-            int steal = nums[i-1] + prev2;
-            int skip = prev1;
-
-            int curr = max(steal , skip);
-
-            prev2 = prev1 ;
-            prev1 = curr ;
-        }
-
-        return prev1 ;
+        return dp[i] = max(steal , skip);
+    }
+    int rob(vector<int>& nums) {
+    
+        int n = nums.size();  
+        dp.resize(n , -1)  ; 
+        return solve(nums,0);
         
     }
 };
+/*
+Time: O(n)
+Space: O(n) — dp array + recursion stack
+*/
