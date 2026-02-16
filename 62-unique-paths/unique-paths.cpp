@@ -1,31 +1,26 @@
 class Solution {
 public:
-    vector<vector<int>> dp;
-    int memo(int i , int j, int m , int n){
-        // base cases
-
-        // out of grid
-        if(i>=m && j>=n) return 0 ;
-
-        // reached destination
-        if(i==m-1 || j==n-1) return 1 ;
-
-        if(dp[i][j] != -1) return dp[i][j];
-
-        int down = memo(i+1 , j , m , n) ;
-        int right = memo(i , j+1 , m , n) ;
-
-        return dp[i][j] = down + right ;
-    }
-
     int uniquePaths(int m, int n) {
-        dp.resize(m , vector<int>(n,-1));
-        return memo(0 , 0 , m , n) ;
+        // bottom up approach tabulation
+        vector<vector<int>> dp(m, vector<int>(n, 0));
 
-        //return recursion(0 , 0 , m , n) ;
-        
+        // base cases
+        for (int i = 0; i < m; i++)
+            dp[i][0] = 1;
+
+        for (int j = 0; j < n; j++)
+            dp[0][j] = 1;
+
+        // fill the table
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+        //destination cell
+        return dp[m - 1][n - 1];
     }
 };
 
-// TC--> O(m*n)
-// SC--> O(m*n)
+//TC-->O(m*n)
+//SC-->O(m*n)
