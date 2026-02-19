@@ -1,25 +1,31 @@
 class Solution {
 public:
     int minPathSum(vector<vector<int>>& grid) {
-        // bottom up aaproach 
-
-        int m = grid.size() ;
+        // space optimised approach 
+        
+        int m = grid.size();
         int n = grid[0].size();
 
-        for(int i = 1 ; i<m ; i++){
-            grid[i][0] += grid[i-1][0];
+        vector<int> dp(n, 0);
+
+        // initialize first cell
+        dp[0] = grid[0][0];
+
+        // first row
+        for (int j = 1; j < n; j++) {
+            dp[j] = dp[j - 1] + grid[0][j];
         }
 
-        for(int j=1 ; j<n ; j++){
-            grid[0][j] += grid[0][j-1];
-        }
-        
-        for(int i = 1 ; i<m ; i++){
-            for(int j = 1 ; j<n ; j++){
-                grid[i][j] += min(grid[i-1][j] , grid[i][j-1]);
+        // remaining rows
+        for (int i = 1; i < m; i++) {
+            // first column
+            dp[0] += grid[i][0];
+
+            for (int j = 1; j < n; j++) {
+                dp[j] = grid[i][j] + min(dp[j], dp[j - 1]);
             }
         }
 
-        return grid[m-1][n-1] ;
+        return dp[n - 1];
     }
 };
