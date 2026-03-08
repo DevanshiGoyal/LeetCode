@@ -1,19 +1,30 @@
 class Solution {
 public:
-    string findDifferentBinaryString(vector<string>& nums) {
-
-        int n = nums.size();
-        unordered_set<string> s(nums.begin(), nums.end());
-
-        for (int i = 0; i < (1 << n); ++i) {
-            string candidate = "";
-            for (int j = 0; j < n; ++j) {
-                candidate += (i & (1 << j)) ? '1' : '0';
-            }
-            if (s.find(candidate) == s.end()) {
-                return candidate;
-            }
+    vector<string> vec;
+    void solve(int n, string s)
+    {
+        if(n==0){
+            vec.push_back(s);
+            return;
         }
-        return "";        
+        solve(n-1,s+"0");
+        solve(n-1,s+"1");
+    }
+    string findDifferentBinaryString(vector<string>& nums) {
+        
+        int n = nums[0].size();
+
+        map<string,int> mp;
+        for(auto x:nums){
+            mp[x]++;
+        }
+
+        solve(n,"");
+
+        for(auto x:vec){
+            if(!mp.count(x)) return x;
+        }
+
+        return "";
     }
 };
