@@ -1,70 +1,61 @@
 class Solution {
 public:
+
+    // Function to find largest rectangle in histogram
     int largestRectangleArea(vector<int>& heights) {
-        int n = heights.size();
         stack<int> st;
-        
-
-        vector<int> prevSmaller(n), nextSmaller(n);
-
-        
-
-        for(int i = 0 ; i<n ; i++){
-            while(!st.empty() && heights[st.top()] >= heights[i]){
-                st.pop() ;
-                
-            }
-            if(st.empty()){
-                prevSmaller[i] = -1 ;
-
-            }else prevSmaller[i] = st.top() ;
-
-            st.push(i) ;
-        }
-
-        while (!st.empty()) st.pop();
-
-        //NSR
-
-        for (int i = n - 1; i >= 0; i--){
-            while(!st.empty() && heights[st.top()] >= heights[i]){
-                st.pop() ;
-                
-            }
-            if(st.empty()){
-                nextSmaller[i] = n ;
-            }else nextSmaller[i] = st.top() ;
-
-            st.push(i) ;
-        }
-
         int maxArea = 0;
-        for (int i = 0; i < n; i++) {
-            int height = heights[i];
-            int width = nextSmaller[i] - prevSmaller[i] - 1;
-            maxArea = max(maxArea, height * width);
+
+        // Add extra 0 to flush stack at the end
+        heights.push_back(0);
+
+        for (int i = 0; i < heights.size(); i++) {
+
+            // If current height is smaller → calculate area
+            while (!st.empty() && heights[i] < heights[st.top()]) {
+
+                int h = heights[st.top()];
+                st.pop();
+
+                int w;
+                if (st.empty()) 
+                    w = i;                  // full width
+                else 
+                    w = i - st.top() - 1;  // between boundaries
+
+                maxArea = max(maxArea, h * w);
+            }
+
+            st.push(i);
         }
 
         return maxArea;
     }
 
+    // Function to find maximal rectangle in matrix
     int maximalRectangle(vector<vector<char>>& matrix) {
+        if (matrix.empty()) return 0;
+
         int rows = matrix.size();
         int cols = matrix[0].size();
 
-        vector<int> histogram(cols, 0);
-        int answer = 0;
+        vector<int> height(cols, 0);  // histogram
+        int maxArea = 0;
 
         for (int i = 0; i < rows; i++) {
+
+            // Build histogram for current row
             for (int j = 0; j < cols; j++) {
                 if (matrix[i][j] == '1')
-                    histogram[j]++;
+                    height[j] += 1;
                 else
-                    histogram[j] = 0;
+                    height[j] = 0;
             }
-            answer = max(answer, largestRectangleArea(histogram));
+
+            // Find max area for this row
+            maxArea = max(maxArea, largestRectangleArea(height));
         }
 
-        return answer;
+        return maxArea;
     }
 };
