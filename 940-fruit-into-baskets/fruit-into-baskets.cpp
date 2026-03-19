@@ -1,25 +1,20 @@
 class Solution {
 public:
-    //sliding window technique 
     int totalFruit(vector<int>& fruits) {
+        int  n = fruits.size() ;
 
-        int l = 0 , r = 0 , maxlen = 0 ;
-        int n = fruits.size();
+        int l = 0 , r =0 , maxlen = 0 ;
 
-        // hash map to store the count of each type fruit ;
         unordered_map<int , int> basket ;
 
         while(r<n){
-            basket[fruits[r]]++;
+            basket[fruits[r]]++ ;
 
-            //If the map has more than 2 fruit types
-            //shrink the window from start until back to only two types
             if(basket.size()>2){
                 basket[fruits[l]]--;
 
-                if(basket[fruits[l]]==0){
-                    basket.erase(fruits[l]);
-
+                if(basket[fruits[l]] == 0){
+                    basket.erase(fruits[l]) ;
                 }
                 l++;
             }
@@ -32,7 +27,7 @@ public:
         
     }
 };
-
-// TC--->O(N)
-// SC--->O(1) 
-//The map stores at most 3 keys at any point (though 2 is the limit, temporarily it might hold 3 during adjustment).
+/*
+Time	O(n)
+Space	O(1) (max 3 keys)
+*/
