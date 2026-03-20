@@ -1,41 +1,30 @@
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-        // better approacj approach 
-        /*
-        I initialize max and min with first element
+        //optimised appproach
+        // based on observation 
+        // all positive ---> then take all array 
+        // even negatives --> then also take whole array 
+        // odd negatives ---> remove one negative values ----> prefix and suufix prod 
+        // using prefix and suffix product
+        // TC--->O(N)  SC--->O(1)
 
-At each step, I decide whether to start fresh or extend
+        int n = nums.size();
+        int pref = 1 , suff = 1 ;
+        int ans = INT_MIN ;
 
-If number is negative, roles of max and min flip
+        for(int i = 0 ; i<n ; i++){
+            //Reset prefix and suffix to 1 if they become 0 (cases where product of  subarray becomes 0)
+            if(pref == 0) pref = 1;
+            if(suff == 0) suff = 1;
 
-Finally, I keep updating global answer
-        */
+            pref = pref*nums[i] ;
+            suff = suff * nums[n-i-1] ;
 
-        int n = nums.size() ;
-        int maxProd = nums[0];   // max product till now
-        int minProd = nums[0];   // min product till now
-        int ans = nums[0];       // final answer
-        
-        for(int i = 1 ; i<n ; i++){
-            // If current element is negative ->swap
-            if(nums[i] < 0){
-                swap(maxProd , minProd) ;
-            }
+            ans = max(ans , max(pref , suff));
 
-            // either take current element OR extend subarray
-            maxProd = max(nums[i], maxProd * nums[i]);
-            minProd = min(nums[i], minProd * nums[i]);
-            
-
-            ans = max(ans, maxProd);
         }
-
-        return ans;
+        return ans ;
         
     }
 };
-/*
-tc-->O(n)
-sc-->o(n)
-*/
