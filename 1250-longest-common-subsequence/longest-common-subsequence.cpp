@@ -4,34 +4,30 @@ public:
     //Memoization -->tle
     // overlapping subproblems
     // Bottom up approach 
-    // TC---> O((m*n))  SC-->O(m*n) 
+    // space optimised 1D optimised 
+    // TC---> O((m*n))  SC-->O(n) 
     
     int longestCommonSubsequence(string s1, string s2) {
        
         int  m = s1.length() ;
         int n = s2.length() ;
 
-        vector<vector<int>>dp(m+1 , vector<int>(n+1)) ;
-        
-        for(int r = 0 ; r<m+1 ; r++){
-            dp[r][0] = 0 ;
-        }
-        for(int c = 0 ; c<n+1 ; c++){
-            dp[0][c] = 0 ;
-        }
+        vector<int>dp(n+1,0) ;
 
         for(int i = 1 ; i<m+1 ; i++){
+            int prevdiag = 0 ;
             for(int j =1 ;j<n+1 ; j++){
+                int temp = dp[j] ;
                 if(s1[i-1]==s2[j-1]){
-                    dp[i][j] = 1+ dp[i-1][j-1] ;
+                    dp[j] = 1+ prevdiag ;
                 }
                 else{
-                    dp[i][j] = max(dp[i][j-1] , dp[i-1][j]) ;
+                    dp[j] = max(dp[j-1] , dp[j]) ;
                 }
-
+                prevdiag = temp ;
             }
         }
-        return dp[m][n];
+        return dp[n];
         
     }
 };
