@@ -74,7 +74,7 @@ public:
                 }
                 return false;
             }
-            if(!node->containsKey(ch)) return false;
+            else if(!node->containsKey(ch)) return false;
             node=node->get(ch);
         }
         return node->isEnd();
