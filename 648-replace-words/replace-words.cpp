@@ -1,87 +1,37 @@
-// Trie Node
-struct Node {
-    Node* links[26] = {nullptr};
-    bool flag = false;
-
-    bool containsKey(char ch) {
-        return links[ch - 'a'] != nullptr;
-    }
-
-    void put(char ch, Node* node) {
-        links[ch - 'a'] = node;
-    }
-
-    Node* get(char ch) {
-        return links[ch - 'a'];
-    }
-
-    bool isEnd() {
-        return flag;
-    }
-
-    void setEnd() {
-        flag = true;
-    }
-};
-
-// Trie Class
-class Trie {
-private:
-    Node* root;
-
-public:
-    Trie() {
-        root = new Node();
-    }
-
-    void addWord(string word) {
-        Node* node = root;
-        for (char ch : word) {
-            if (!node->containsKey(ch)) {
-                node->put(ch, new Node());
-            }
-            node = node->get(ch);
-        }
-        node->setEnd();
-    }
-
-    //Return shortest root
-    string search(string word) {
-        Node* node = root;
-        string prefix = "";
-
-        for (char ch : word) {
-            if (!node->containsKey(ch)) break;
-
-            prefix += ch;
-            node = node->get(ch);
-
-            if (node->isEnd()) return prefix;
-        }
-
-        return word; // no root found
-    }
-};
-
 class Solution {
 public:
+// without tries using hashset
     string replaceWords(vector<string>& dictionary, string sentence) {
-        Trie trie;
+        // store root word 
+        unordered_set<string>st(dictionary.begin() , dictionary.end()) ;
 
-        // Insert dictionary
-        for (auto word : dictionary) {
-            trie.addWord(word);
+        string ans , word ;
+
+        // process sentence 
+        stringstream ss(sentence) ;
+        // for each word 
+        while(ss >> word){
+            string str ;
+            bool flag = false ;
+            // search in hashset 
+            for(char c : word){
+                str+=c ;
+                if(st.count(str)){ // if present 
+                    flag = true ;
+                    break ;
+                }
+            }
+            if(flag){
+                ans+=str; // replace with root word 
+            }else{
+                ans+=word ; // not found root so as it is word 
+            }
+            ans+=" " ;
         }
-
-        stringstream ss(sentence);
-        string word;
-        string result = "";
-
-        while (ss >> word) {
-            result += trie.search(word) + " ";
-        }
-
-        result.pop_back(); // remove trailing space
-        return result;
+        if(!ans.empty()) ans.pop_back() ; // remove trailing space 
+        return ans ;
+        
     }
 };
+//tc-->O(n*m) n->length of sentence   m->avg len of word
+//sc-->O(d)  d->size of dict (extra space for set storing dict words)
