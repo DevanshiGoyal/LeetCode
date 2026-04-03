@@ -33,7 +33,7 @@ public:
         root = new Node();
     }
 
-    // Insert number into Trie
+    // Insert 
     void insert(int num) {
         Node* node = root;
 
@@ -47,11 +47,11 @@ public:
         }
     }
 
-    // Get maximum XOR for a number
+    // Get maximum XOR 
     int getMax(int num) {
         Node* node = root;
 
-        // If trie is empty
+        //  trie is empty
         if(!node) return -1;
 
         int maxXor = 0;
@@ -59,7 +59,7 @@ public:
         for(int i = 31; i >= 0; i--) {
             int bit = (num >> i) & 1;
 
-            // Prefer opposite bit
+            //  opposite bit
             if(node->containsKey(1 - bit)) {
                 maxXor |= (1 << i);
                 node = node->get(1 - bit);
@@ -76,40 +76,38 @@ class Solution {
 public:
     vector<int> maximizeXor(vector<int>& nums, vector<vector<int>>& queries) {
 
-        // Sort nums
+      
         sort(nums.begin(), nums.end());
 
-        // Store queries as {mi, xi, index}
-        vector<vector<int>> offlineQueries;
+        // {mi, xi, index}
+        vector<vector<int>> Q;
 
         for(int i = 0; i < queries.size(); i++) {
             int xi = queries[i][0];
             int mi = queries[i][1];
-            offlineQueries.push_back({mi, xi, i});
+            Q.push_back({mi, xi, i});
         }
 
-        // Sort queries based on mi
-        sort(offlineQueries.begin(), offlineQueries.end());
+        sort(Q.begin(), Q.end());
 
-        // Result array
+  
         vector<int> ans(queries.size(), -1);
 
         Trie trie;
         int i = 0; // pointer for nums
 
-        // Process queries
-        for(auto &q : offlineQueries) {
+     
+        for(auto &q : Q) {
             int mi = q[0];
             int xi = q[1];
             int idx = q[2];
 
-            // Insert all valid nums (<= mi)
+           
             while(i < nums.size() && nums[i] <= mi) {
                 trie.insert(nums[i]);
                 i++;
             }
 
-            // If no elements inserted, answer is -1
             if(i == 0) {
                 ans[idx] = -1;
             } else {
