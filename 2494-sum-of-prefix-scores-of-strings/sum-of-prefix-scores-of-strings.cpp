@@ -1,6 +1,7 @@
 class Node {
 public : 
-	
+	// bute and better-->TLE
+    //optimal using trie 
 	Node* links[26];
 	bool flag = false;
     int count = 0;
