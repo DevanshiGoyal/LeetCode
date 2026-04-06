@@ -1,11 +1,11 @@
 class KthLargest {
 private:
-    priority_queue<int, vector<int>, greater<int>> pq;
+    priority_queue<int, vector<int>, greater<int>> pq; // O(k)
     int K;
 public:
     KthLargest(int k, vector<int>& nums) {
         K = k;
-
+        // nlog k
         for(int i = 0; i < nums.size(); i++){
             if(pq.size() < K)
                 pq.push(nums[i]);
@@ -15,7 +15,7 @@ public:
             }
         }
     }
-    
+    //log k
     int add(int val) {
         if(pq.size() < K){
             pq.push(val);
