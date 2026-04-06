@@ -9,14 +9,14 @@ public:
     }
     
     void addNum(int num) {
-        // Step 1: add to maxHeap
+        // add to maxHeap
         maxHeap.push(num);
 
-        // Step 2: move largest of left to right
+        // move largest of left to right
         minHeap.push(maxHeap.top());
         maxHeap.pop();
 
-        // Step 3: balance sizes
+        // balance sizes
         if (minHeap.size() > maxHeap.size()) {
             maxHeap.push(minHeap.top());
             minHeap.pop();
