@@ -1,59 +1,43 @@
 class Solution {
 public:
-    string reorganizeString(string s) {
+    string reorganizeString(string S) {
+        string res="";
+        unordered_map<char,int> mp;
+        priority_queue<pair<int,char>>pq;
         
-        int freq[26] = {0};
-        int n = s.size();
+        for(auto s: S)
+            mp[s]+=1;
         
-        for(char c : s){
-            freq[c - 'a']++;
-            
-            // impossible case
-            if(freq[c - 'a'] > (n + 1) / 2) 
-                return "";
-        }
-
-        // Max heap (freq, char)
-        priority_queue<pair<int, char>> pq;
+        for(auto m: mp)
+            pq.push(make_pair(m.second,m.first));
         
-        for(int i = 0; i < 26; i++){
-            if(freq[i] > 0){
-                pq.push({freq[i], 'a' + i});
-            }
-        }
-
-        string res;
-
-        
-        while(!pq.empty()){
-            
-            //  most freq char
-            auto temp1 = pq.top();
+        while(pq.size()>1){
+            auto top1= pq.top();
             pq.pop();
-
-            //  last char same - conflict
-            if(!res.empty() && res.back() == temp1.second){
-                
-                //  second most frequent
-                auto temp2 = pq.top();
-                pq.pop();
-                res += temp2.second;
-
-                if(temp2.first - 1 > 0){
-                    pq.push({temp2.first - 1, temp2.second});
-                }
-
-                pq.push(temp1);
-            }
-            else{
-             
-                res += temp1.second;
-                if(temp1.first - 1 > 0){
-                    pq.push({temp1.first - 1, temp1.second});
-                }
-            }
+            auto top2 = pq.top();
+            pq.pop();
+            
+            res+=top1.second;
+            res+=top2.second;
+            
+            top1.first -=1;
+            top2.first -= 1;
+            
+            if(top1.first > 0)
+                pq.push(top1);
+            
+            if(top2.first > 0)
+                pq.push(top2);
         }
-
+        
+        if(!pq.empty()){
+            if(pq.top().first > 1)
+                return "";
+            
+            else
+                res+=pq.top().second;
+        }
+        
         return res;
     }
 };
