@@ -1,39 +1,41 @@
 class Solution {
 public:
-    struct compare {
-        bool operator()(ListNode* a, ListNode* b) {
-            return a->val > b->val; // min heap
-        }
-    };
-
-    ListNode* mergeKLists(vector<ListNode*>& lists) {
-        priority_queue<ListNode*, vector<ListNode*>, compare> pq;
-
-        // push all heads
-        for (auto node : lists) {
-            if (node != nullptr) {
-                pq.push(node);
-            }
-        }
-
-        // Dummy node for result list
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
         ListNode* dummy = new ListNode(0);
         ListNode* tail = dummy;
 
-        
-        while (!pq.empty()) {
-            ListNode* top = pq.top();
-            pq.pop();
-
-            tail->next = top;
-            tail = tail->next;
-
-            if (top->next != nullptr) {
-                pq.push(top->next);
+        while (l1 && l2) {
+            if (l1->val < l2->val) {
+                tail->next = l1;
+                l1 = l1->next;
+            } else {
+                tail->next = l2;
+                l2 = l2->next;
             }
+            tail = tail->next;
         }
+
+        if (l1) tail->next = l1;
+        if (l2) tail->next = l2;
 
         return dummy->next;
     }
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if (lists.empty()) return nullptr;
+
+        int n = lists.size();
+
+        while (n > 1) {
+            int k = (n + 1) / 2;
+
+            for (int i = 0; i < n / 2; i++) {
+                lists[i] = mergeTwoLists(lists[i], lists[i + k]);
+            }
+
+            n = k;
+        }
+
+        return lists[0];
+    }
 };
-// tc-->O(NlogK) at most k node hi aa rhe h heap m 
