@@ -1,118 +1,38 @@
 class Twitter {
-private:
-    int timeStamp;
-
-    // Tweet structure
-    struct Tweet {
-        int id;
-        int time;
-        Tweet* next;
-
-        Tweet(int id, int time) {
-            this->id = id;
-            this->time = time;
-            this->next = nullptr;
-        }
-    };
-
-    // User structure
-    struct User {
-        int id;
-        unordered_set<int> followed;
-        Tweet* tweet_head;
-
-        User(int id) {
-            this->id = id;
-            tweet_head = nullptr;
-            follow(id); // follow self
-        }
-
-        void follow(int userId) {
-            followed.insert(userId);
-        }
-
-        void unfollow(int userId) {
-            followed.erase(userId);
-        }
-
-        void post(int tweetId, int timeStamp) {
-            Tweet* t = new Tweet(tweetId, timeStamp);
-            t->next = tweet_head;
-            tweet_head = t;
-        }
-    };
-
-    unordered_map<int, User*> userMap;
-
 public:
-    Twitter() {
-        timeStamp = 0;
-    }
-
-    // Post tweet
+    Twitter() {}
+    int count = 0;
+    unordered_map<int,vector<pair<int,int>>>m;
+    map<pair<int,int>,int>m1;
     void postTweet(int userId, int tweetId) {
-        if (userMap.find(userId) == userMap.end()) {
-            userMap[userId] = new User(userId);
-        }
-
-        userMap[userId]->post(tweetId, timeStamp++);
+        m[userId].push_back({count,tweetId});
+        count++;
     }
-
-    // Get News Feed
+    
     vector<int> getNewsFeed(int userId) {
-        vector<int> result;
-
-        if (userMap.find(userId) == userMap.end())
-            return result;
-
-        auto cmp = [](Tweet* a, Tweet* b) {
-            return a->time < b->time; // max heap
-        };
-
-        priority_queue<Tweet*, vector<Tweet*>, decltype(cmp)> pq(cmp);
-
-        // Get all followed users
-        for (int followeeId : userMap[userId]->followed) {
-            if (userMap[followeeId]->tweet_head != nullptr) {
-                pq.push(userMap[followeeId]->tweet_head);
-            }
+        unordered_set<int> v;
+        vector<pair<int,int>>v1;
+        vector<int>ans;
+        v.insert(userId);
+        for(auto i:m1){
+            if(i.first.first == userId && i.second>0) v.insert(i.first.second);
         }
-
-        int count = 0;
-
-        while (!pq.empty() && count < 10) {
-            Tweet* t = pq.top();
-            pq.pop();
-
-            result.push_back(t->id);
-            count++;
-
-            if (t->next != nullptr) {
-                pq.push(t->next);
-            }
+        for(auto i:v){
+            v1.insert(v1.end(),m[i].begin(),m[i].end());
         }
-
-        return result;
+        sort(v1.rbegin(),v1.rend());
+        for(auto i:v1){
+            if (ans.size() == 10) break;
+            ans.push_back(i.second);
+        }
+        return ans;
     }
-
-    // Follow
+    
     void follow(int followerId, int followeeId) {
-        if (userMap.find(followerId) == userMap.end()) {
-            userMap[followerId] = new User(followerId);
-        }
-
-        if (userMap.find(followeeId) == userMap.end()) {
-            userMap[followeeId] = new User(followeeId);
-        }
-
-        userMap[followerId]->follow(followeeId);
+        m1[{followerId,followeeId}]++;
     }
 
-    // Unfollow
     void unfollow(int followerId, int followeeId) {
-        if (userMap.find(followerId) == userMap.end() || followerId == followeeId)
-            return;
-
-        userMap[followerId]->unfollow(followeeId);
+        if(m1[{followerId,followeeId}]) m1[{followerId,followeeId}]--;
     }
 };
