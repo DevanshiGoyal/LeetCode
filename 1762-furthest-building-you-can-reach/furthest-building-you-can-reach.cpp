@@ -1,25 +1,34 @@
 class Solution {
 public:
-    int furthestBuilding(vector<int>& heights, int bricks, int ladders) {
-        int n = heights.size();
-        priority_queue<int, vector<int>, greater<int>> pq; // min heap 
-        for (int i = 0; i < n - 1; ++i) {
-            int diff = heights[i + 1] - heights[i];
-            if (diff > 0) {
-                if (pq.size() < ladders) {
-                    pq.push(diff);
-                } else {
-                    if (pq.empty() || pq.top() >= diff) {
-                        bricks -= diff;
-                    } else {
-                        int poll = pq.top(); pq.pop();
-                        pq.push(diff);
-                        bricks -= poll;
-                    }
-                    if (bricks < 0) return i;
-                }
+    int furthestBuilding(vector<int>& h, int b, int l) {
+        
+        // Priority Queue for storing the bricks used in each step in decreasing order (Max at top)
+        priority_queue<int> p;
+    
+        int i=0, diff =0; 
+        for(i=0; i<h.size()-1; i++){ 
+            
+            diff = h[i+1]-h[i];
+            
+            if(diff <= 0){
+                continue;
             }
+
+            b -= diff; 
+            p.push(diff); 
+       
+            if(b < 0){
+                b += p.top(); 
+                p.pop(); 
+                l--;
+            }
+
+          
+            if(l < 0) break;
         }
-        return n - 1;
+        
+        
+        return i;
     }
 };
+
