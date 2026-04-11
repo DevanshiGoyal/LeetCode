@@ -21,32 +21,22 @@ public:
 
 class Solution {
 public:
+    unordered_map<Node*, Node*> mapping;
+
     Node* cloneGraph(Node* node) {
-        if(node==NULL)return NULL;
-        unordered_map<Node*,Node*>mp;
-        mp[node]=new Node(node->val);
-        queue<Node*>q;
+        if (!node) return nullptr;
 
-        q.push(node);
-    while(!q.empty()){
-        Node* curr=q.front();
-        q.pop();
-
-        for(auto nei:curr->neighbors){
-            if(mp.find(nei)==mp.end()){
-                mp[nei]=new Node(nei->val);
-                q.push(nei);
-            }
-
-            mp[curr]->neighbors.push_back(mp[nei]);
-
+        if (mapping.find(node) != mapping.end()) {
+            return mapping[node];
         }
 
+        Node* clone = new Node(node->val);
+        mapping[node] = clone;
 
-        
-    }
-    return mp[node];
+        for (Node* neighbor : node->neighbors) {
+            clone->neighbors.push_back(cloneGraph(neighbor));
+        }
 
-        
+        return clone;
     }
 };
