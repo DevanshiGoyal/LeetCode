@@ -1,40 +1,70 @@
 class Solution {
 public:
     int minMutation(string start, string end, vector<string>& bank) {
-	//st holds all valid mutations
-	unordered_set<string> st{bank.begin(),bank.end()};
-	//if end mutaion is not in list return -1;
-	if(!st.count(end)) return -1;
-	//start BFS by pushing the starting mutation
-	queue<string> Q;
-	Q.push(start);
-	int steps=0,s;
-	string cur,t;
-	while(!Q.empty()){
-		s=Q.size();
-		while(s--){
-			cur=Q.front();
-			Q.pop();
-			//If we reach end mutation
-			if(cur==end) return steps;
-			//We erase the cur mutation in order to avoid redundant checking
-			st.erase(cur);
-			//as the length of mutation is 8 and it can take A,C,G,T
-			//at each index we check the possibility of mutation by replcaing it with A,C,G,T
-			for(int i=0;i<8;i++){
-				t=cur;
-				t[i]='A';
-				if(st.count(t)) Q.push(t);
-				t[i]='C';
-				if(st.count(t)) Q.push(t);
-				t[i]='G';
-				if(st.count(t)) Q.push(t);
-				t[i]='T';
-				if(st.count(t)) Q.push(t);
-			}
-		}
-		steps++;
-	}
-	return -1;
+        int size = bank.size(); // extract size
+        
+        unordered_set<string> dictionary; // make dictionary set 
+        for(int i = 0; i < size; i++) // insert every word of bank into the set
+        {
+            dictionary.insert(bank[i]);
+        }
+        
+        // if end word is not present into the dictionary,
+        // will return false from here
+        if(dictionary.find(end) == dictionary.end()){
+            return -1;
+        }
+        
+        // choices that are availble to us
+        vector<char> available = {'A', 'C', 'G', 'T'};
+        
+        // make vis set, to find out whether for a particular word, 
+        // either we previously encountered or not
+        unordered_set<string> vis;
+        
+        int ans = 0; // declare ans variable 
+        
+        queue<string> q; // define queue to start bfs
+        q.push(start); // push starting word into the queue
+        vis.insert(start); // insert into vis
+        
+        // starting bfs
+        while(!q.empty()){
+            int n = q.size(); // extract size of queue
+            while(n--){
+                string curr = q.front(); // curr word 
+                q.pop(); // pop from queue
+                
+                if(curr == end) // if curr word equals to end, return ans from here
+                {
+                    return ans;
+                }
+                
+                // now for every index of curr word
+                for(int i = 0; i < 8; i++){
+                    char orig = curr[i]; 
+                    
+                    // we will try to replace every available choice
+                    for(int j = 0; j < 4; j++){   
+                        curr[i] = available[j]; // replace character
+                        
+                        // if it is present into the dictionary
+                        if(dictionary.find(curr) != dictionary.end()){
+                            // also we haven't seen it previously
+                            if(vis.find(curr) == vis.end()){
+                                q.push(curr); // then push into queue
+                                vis.insert(curr); // and also put into vis
+                            }
+                        }
+                    }
+                    // now replace with again original character,
+                    // for further check
+                    curr[i] = orig;
+                }
+            }
+            ans++; // increment answer
+        }
+        
+        return -1; // still we will not able to find end word, return -1
     }
 };
