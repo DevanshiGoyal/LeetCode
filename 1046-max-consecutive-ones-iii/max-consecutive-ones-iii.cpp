@@ -17,8 +17,9 @@ public:
                 }
                 l++;
             }
+            maxlen = max(maxlen , r-l+1) ;
             r++ ;
-            maxlen = max(maxlen , r-l) ;
+            
 
             
         }
