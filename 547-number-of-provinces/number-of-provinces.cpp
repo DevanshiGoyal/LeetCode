@@ -1,13 +1,25 @@
 class Solution {
 public:
-    void dfs(unordered_map<int , vector<int>> &adj, int u , vector<bool> &visited ){
+    // using bfs
+    void bfs(unordered_map<int , vector<int>> &adj, int u , vector<bool> &visited ){
+
+        queue<int> q ;
+        q.push(u) ;
         visited[u] = true ;
 
-        for(int &v : adj[u]){
-            if(!visited[v]){
-                dfs(adj , v , visited) ;
+        while(!q.empty()){
+            int u = q.front() ;
+            q.pop() ;
+
+            for(int &v : adj[u]){
+                if(!visited[v]){
+                    visited[v] = true ;
+                    q.push(v) ;
+                }
             }
         }
+
+        
     }
     int findCircleNum(vector<vector<int>>& isConnected) {
         int n = isConnected.size() ;
@@ -31,7 +43,7 @@ public:
         for(int u = 0 ; u<n ; u++){
             if(!visited[u]){
                 province++;
-                dfs(adj , u ,visited) ;
+                bfs(adj , u ,visited) ;
             }
         }
         return province ;
@@ -50,6 +62,6 @@ sc
 
 adj list -> O(V+E)
 visited = O(V)
-recursion stack -> O(V)
+queue -> O(V)
 sc->  O(V+E)
 */
