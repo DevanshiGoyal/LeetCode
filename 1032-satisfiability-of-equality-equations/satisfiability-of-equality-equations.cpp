@@ -34,7 +34,7 @@ public:
         rank.resize(26 , 0);
         for(int i = 0 ; i<26 ; i++) parent[i] = i ;
 
-        // First pass: process "==" equations
+        // first pass -->  process "==" equations
         for (string& eq : equations) {
             if (eq[1] == '=') {
                 int x = eq[0] - 'a';
@@ -43,11 +43,11 @@ public:
             }
         }
 
-        // Second pass: process "!=" equations
+        // Second pass--> process "!=" equations
         for (string& eq : equations) {
             if (eq[1] == '!') {
-                int x = eq[0] - 'a';
-                int y = eq[3] - 'a';
+                int x= eq[0] - 'a';
+                int y= eq[3] - 'a';
                 if (find(x) == find(y)) return false;
             }
         }
