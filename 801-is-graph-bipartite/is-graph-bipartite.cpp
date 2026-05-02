@@ -46,3 +46,13 @@ public:
         
     }
 };
+
+/*
+
+TC
+BFS  O(V + E)
+= O(V + E)
+
+SC
+color array + queue = O(V)
+*/
