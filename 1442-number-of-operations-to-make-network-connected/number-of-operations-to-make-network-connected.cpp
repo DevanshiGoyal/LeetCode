@@ -1,6 +1,6 @@
 class Solution {
 public:
-
+    // comp h yaha pr so dsu and also connection so union find 
     vector<int> parent ;
     vector<int> rank ;
     
@@ -30,7 +30,7 @@ public:
         
     }
     int makeConnected(int n, vector<vector<int>>& connections) {
-
+        // impossible as we nees n-1  connect krne k liye sare comp
         if(connections.size() < n-1) return -1 ;
 
         parent.resize(n);
