@@ -20,3 +20,6 @@ public:
         return true;
     }
 };
+
+// TC-->o(N) 
+//sc-->O(1)
