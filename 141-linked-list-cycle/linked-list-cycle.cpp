@@ -8,20 +8,22 @@
  */
 class Solution {
 public:
-    bool hasCycle(ListNode *head) {
-
-        if(head == nullptr || head->next == nullptr) return false ;
-
-        ListNode * fast = head ;
-        ListNode * slow = head  ;
-
-        while(fast!= NULL && fast->next!= NULL){
-            fast= fast->next->next ;
-            slow = slow->next ;
-            if(fast==slow) return true ;
+    bool hasCycle(ListNode* head) {
+        // brute force 
+        if (head == NULL) {
+            return false;
         }
-        
-        return false ;        
+        map<ListNode*, bool> visited;
+        ListNode* temp = head;
+
+        while (temp != NULL) {
+            if (visited[temp] == true) {
+                return true;
+            }
+            visited[temp] = true;
+            temp = temp->next;
+        }
+        return false;
     }
 };
-//tc-->O(N)  sc-->O(1)
+//tc-->O(N)  sc-->O(N)
