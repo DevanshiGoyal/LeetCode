@@ -1,28 +1,34 @@
 class Solution {
 public:
-    // brute (O(m*n))
-    int earliestFinishTime(vector<int>& landStartTime, vector<int>& landDuration,
-                           vector<int>& waterStartTime, vector<int>& waterDuration) {
-        
-        int ans = INT_MAX;
-        int n = landStartTime.size();
-        int m = waterStartTime.size();
+    // optimal O(m+n)
+    int calc(vector<int>& firstStart,vector<int>& firstDuration,vector<int>& secondStart,vector<int>& secondDuration) {
 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
+        int earliestFinish = INT_MAX;
 
-                // Land -> Water
-                int landFinish = landStartTime[i] + landDuration[i];
-                int finish1 = max(landFinish, waterStartTime[j]) + waterDuration[j];
-
-                // Water -> Land
-                int waterFinish = waterStartTime[j] + waterDuration[j];
-                int finish2 = max(waterFinish, landStartTime[i]) + landDuration[i];
-
-                ans = min({ans, finish1, finish2});
-            }
+        for (int i = 0; i < firstStart.size(); i++) {
+            earliestFinish =min(earliestFinish,firstStart[i] + firstDuration[i]);
         }
 
-        return ans;
+        int answer = INT_MAX;
+
+        for (int i = 0; i < secondStart.size(); i++) {
+
+            int startTime =max(earliestFinish, secondStart[i]);
+
+            int finishTime =startTime + secondDuration[i];
+
+            answer = min(answer, finishTime);
+        }
+
+        return answer;
+    }
+
+    int earliestFinishTime(vector<int>& landStartTime,vector<int>& landDuration,vector<int>& waterStartTime,vector<int>& waterDuration) {
+
+        int landFirst =calc(landStartTime,landDuration,waterStartTime,waterDuration);
+
+        int waterFirst =calc(waterStartTime,waterDuration,landStartTime,landDuration);
+
+        return min(landFirst, waterFirst);
     }
 };
