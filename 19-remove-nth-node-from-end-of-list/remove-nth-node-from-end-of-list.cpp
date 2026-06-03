@@ -8,39 +8,39 @@
  *     ListNode(int x, ListNode *next) : val(x), next(next) {}
  * };
  */
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode() : val(0), next(nullptr) {}
- *     ListNode(int x) : val(x), next(nullptr) {}
- *     ListNode(int x, ListNode *next) : val(x), next(next) {}
- * };
- */
 class Solution {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
-        ListNode *check = head;
-        int count = 0;
-        while(check != nullptr){
-            check = check->next;
-            count++;
+
+        // optimised approach 
+        ListNode* fast = head ;
+        ListNode* slow = head ;
+        for(int i = 1 ; i<=n ; i++){
+            fast=fast->next ;
+
         }
 
-        n = count - n + 1;
-        if(n == 1)
-        return head->next;
-
-        ListNode *temp = head, *prev = nullptr;
-        count = 1;
-        while(head != nullptr && count != n){
-            prev = head;
-            head = head->next;
-            count++;
+        if(fast==NULL){
+            return head->next ;
         }
-        prev->next = head->next;
+        
+        while( fast->next != NULL){
 
-        return temp;
+            fast=fast->next ;
+            slow=slow->next ;
+
+        }
+        
+
+        ListNode* delNode = slow->next ;
+        slow->next = slow->next->next ;
+        delete delNode ;
+        return head ;
+
+        
+        
     }
 };
+
+//TC--->O(N)
+//SC--->O(1)
