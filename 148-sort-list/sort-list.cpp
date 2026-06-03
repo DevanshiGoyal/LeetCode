@@ -11,80 +11,70 @@
 
 class Solution {
 public:
-    // Function to merge two sorted linked lists
-    ListNode* mergeTwoSortedLinkedLists(ListNode* list1, ListNode* list2) {
-        // Create a dummy node
-        ListNode* dummyNode = new ListNode(-1);
-        
-        // Temp pointer to build merged list
-        ListNode* temp = dummyNode;
-
-        // Traverse both lists
-        while (list1 != nullptr && list2 != nullptr) {
-            // Choose smaller node
-            if (list1->val <= list2->val) {
-                temp->next = list1;
-                list1 = list1->next;
-            } else {
-                temp->next = list2;
-                list2 = list2->next;
-            }
-            // Move temp pointer
-            temp = temp->next;
-        }
-
-        // Attach remaining nodes
-        if (list1 != nullptr) {
-            temp->next = list1;
-        } else {
-            temp->next = list2;
-        }
-
-        // Return head of merged list
-        return dummyNode->next;
-    }
-
-    // Function to find middle of linked list
-    ListNode* findMiddle(ListNode* head) {
-        // If list empty or single node
-        if (head == nullptr || head->next == nullptr) {
-            return head;
-        }
-
-        // Slow and fast pointers
-        ListNode* slow = head;
-        ListNode* fast = head->next;
-
-        // Move fast twice as fast as slow
-        while (fast != nullptr && fast->next != nullptr) {
-            slow = slow->next;
-            fast = fast->next->next;
-        }
-
-        // Return middle node
-        return slow;
-    }
-
-    // Function to perform merge sort
     ListNode* sortList(ListNode* head) {
-        // Base case: empty or single node
-        if (head == nullptr || head->next == nullptr) {
+        //If List Contain a Single or 0 Node
+        if(head == NULL || head ->next == NULL)
             return head;
+        
+        
+        ListNode *temp = NULL;
+        ListNode *slow = head;
+        ListNode *fast = head;
+        
+        // 2 pointer appraoach / turtle-hare Algorithm (Finding the middle element)
+        while(fast !=  NULL && fast -> next != NULL)
+        {
+            temp = slow;
+            slow = slow->next;          //slow increment by 1
+            fast = fast ->next ->next;  //fast incremented by 2
+            
+        }   
+        temp -> next = NULL;            //end of first left half
+        
+        ListNode* l1 = sortList(head);    //left half recursive call
+        ListNode* l2 = sortList(slow);    //right half recursive call
+        
+        return mergelist(l1, l2);         //mergelist Function call
+            
+    }
+    
+    //MergeSort Function O(n*logn)
+    ListNode* mergelist(ListNode *l1, ListNode *l2)
+    {
+        ListNode *ptr = new ListNode(0);
+        ListNode *curr = ptr;
+        
+        while(l1 != NULL && l2 != NULL)
+        {
+            if(l1->val <= l2->val)
+            {
+                curr -> next = l1;
+                l1 = l1 -> next;
+            }
+            else
+            {
+                curr -> next = l2;
+                l2 = l2 -> next;
+            }
+        
+        curr = curr ->next;
+        
         }
-
-        // Find middle node
-        ListNode* middle = findMiddle(head);
-
-        // Split into two halves
-        ListNode* right = middle->next;
-        middle->next = nullptr;
-        ListNode* left = head;
-
-        // Recursively sort both halves
-        left = sortList(left);
-        right = sortList(right);
-
-        // Merge sorted halves
-        return mergeTwoSortedLinkedLists(left, right);
+        
+        //for unqual length linked list
+        
+        if(l1 != NULL)
+        {
+            curr -> next = l1;
+            l1 = l1->next;
+        }
+        
+        if(l2 != NULL)
+        {
+            curr -> next = l2;
+            l2 = l2 ->next;
+        }
+        
+        return ptr->next;
     }
 };
