@@ -26,15 +26,11 @@ public:
         //  sort
         sort(t.begin(), t.end());
 
-        //  rebuild list
-        ListNode* newHead = new ListNode(t[0]);
-        ListNode* curr = newHead;
-
-        for(int i = 1; i < t.size(); i++) {
-            curr->next = new ListNode(t[i]);
-            curr = curr->next;
+        temp = head ;
+        for(int i = 0 ; i<t.size() ; i++){
+            temp->val = t[i] ;
+            temp = temp->next;
         }
-
-        return newHead;
+        return head ;
     }
 };
