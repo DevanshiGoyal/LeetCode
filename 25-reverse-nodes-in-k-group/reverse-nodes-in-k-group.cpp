@@ -9,51 +9,50 @@
  * };
  */
 class Solution {
-public:
-    ListNode* reverseKGroup(ListNode* head, int k) {
-        // brute force 
-        if (head == nullptr || k <= 1) {
-            return head;
+private:
+    pair<ListNode*, ListNode*> reverse(ListNode* head){
+        ListNode* prev = NULL, *forward = head, *curr = head;
+
+        while(curr != NULL){
+            forward = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = forward;
         }
 
-        int count = 0; 
-        //int sizeHead = 0;
-        int sizeRes = 0;
-
-        stack<int> stk;
-        ListNode* curr = head;
-
-        ListNode* dummy = new ListNode(0);
-        ListNode* tail = dummy;
-
-        while (curr != nullptr) {
-            count++;
-            //sizeHead++;
-            stk.push(curr->val);
-            curr = curr->next;
-
-            if (count == k) {
-                sizeRes += k;
-                count = 0;
-                while (!stk.empty()) {
-                    tail->next = new ListNode(stk.top());
-                    tail = tail->next;
-                    stk.pop();
-                }
-            }
-        }
-
-        // Clear unused stack values (important)
-        while (!stk.empty()) stk.pop();
-
-        // Attach remaining nodes
-        ListNode* temp = head;
-        while (sizeRes--) {
-            temp = temp->next;
-        }
-        tail->next = temp;
-
-        return dummy->next;
+        return {prev, head};
     }
 
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode* dummyHead = new ListNode(-1);
+        ListNode* temp = head;
+        ListNode* dummytemp = dummyHead;
+
+        while(temp != NULL){
+            int cnt = 1;
+            ListNode* curr = temp;
+
+            while(cnt < k && temp->next){
+                cnt++;
+                temp = temp->next;
+            }
+
+            if(cnt < k) break;
+
+            ListNode* forward = temp->next;
+            temp->next = NULL;
+
+            auto res = reverse(curr);
+
+            dummytemp->next = res.first;
+            dummytemp = res.second;
+            dummytemp->next = forward;
+
+            temp = forward;
+        }
+
+        return dummyHead->next;
+    }
 };
+//O(n)  O(1)
