@@ -11,38 +11,50 @@
  */
 class BSTIterator {
 public:
-// intution
-    vector<int> inorder;
-    int ptr ;
-
-    void inorderTraversal(TreeNode*root){
+// intution tc & sc->O(n)
+// optimised the sapce to O(h) not storing whole inorder traversal
+    stack<TreeNode*> st  ;
+    
+    void pushAllLeft(TreeNode*root){
         if(!root) return ;
-        inorderTraversal(root->left) ;
-        inorder.push_back(root->val);
-        inorderTraversal(root->right);
+        while(root){
+            st.push(root);
+            root = root->left ;
+        }
 
 
     }
     BSTIterator(TreeNode* root) {
-        inorderTraversal(root);
-        ptr = 0 ;
+        pushAllLeft(root);
         
     }
     
     int next() {
-        return inorder[ptr++] ;
+        TreeNode* node = st.top() ;
+        st.pop() ;
+
+        if(node->right) {
+            pushAllLeft(node->right);
+        }
+
+        return node->val;
         
         
     }
     
     bool hasNext() {
-        return ptr<inorder.size() ;
-        
+        return st.size()>0;
     }
 };
-// tc-->O(n) inorder   next() ->O(1)  hasNext() ->O(1)
-//sc-->O(n)  vector to store all nodes
+/*
+Operation	  Time Complexity
+Constructor	  O(h)
+next()	      O(1) amortized (O(h) worst case for one call)
+hasNext()	  O(1)
 
+
+Space Complexity: O(h) where h is the height of the BST.
+*/
 /**
  * Your BSTIterator object will be instantiated and called as such:
  * BSTIterator* obj = new BSTIterator(root);
