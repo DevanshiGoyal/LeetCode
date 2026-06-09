@@ -26,7 +26,7 @@ public:
         path.pop_back(); // backtrack
         return false;
     }
-    
+
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
         // brute intution
         vector<TreeNode*> path1, path2;
@@ -49,3 +49,16 @@ public:
         
     }
 };
+/*
+Complexity
+getPath() for p → O(N)
+getPath() for q → O(N)
+Comparing paths → O(H)
+
+Overall:
+
+Time  : O(N)
+Space : O(H)
+
+where H is the height of the tree.
+*/
