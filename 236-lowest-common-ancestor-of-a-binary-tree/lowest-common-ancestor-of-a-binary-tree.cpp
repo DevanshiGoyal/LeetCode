@@ -9,56 +9,21 @@
  */
 class Solution {
 public:
-    bool getPath(TreeNode* root, TreeNode* target,vector<TreeNode*>& path) {
-
-        if (root == NULL)
-            return false;
-
-        path.push_back(root);
-
-        if (root == target)
-            return true;
-
-        if (getPath(root->left, target, path) ||
-            getPath(root->right, target, path))
-            return true;
-
-        path.pop_back(); // backtrack
-        return false;
-    }
-
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
-        // brute intution
-        vector<TreeNode*> path1, path2;
 
-        getPath(root, p, path1);
-        getPath(root, q, path2);
+        if(root == NULL) return NULL ;
 
-        TreeNode* lca = nullptr;
+        if(root == p || root== q ) return root ;
 
-        int i = 0;
-        while(i < path1.size() && i < path2.size()) {
-            if(path1[i] == path2[i])
-                lca = path1[i];
-            else
-                break;
-            i++;
-        }
+        // leftside se leftN nikal lo and rightside se rightN
+        TreeNode* leftN = lowestCommonAncestor(root->left , p , q) ;
+        TreeNode* rightN = lowestCommonAncestor(root->right , p , q) ;
 
-        return lca;
+        if(leftN != NULL && rightN !=NULL ) return root ;
+
+        if(leftN != NULL) return leftN ;
+
+        return rightN ;
         
     }
 };
-/*
-Complexity
-getPath() for p → O(N)
-getPath() for q → O(N)
-Comparing paths → O(H)
-
-Overall:
-
-Time  : O(N)
-Space : O(H)
-
-where H is the height of the tree.
-*/
