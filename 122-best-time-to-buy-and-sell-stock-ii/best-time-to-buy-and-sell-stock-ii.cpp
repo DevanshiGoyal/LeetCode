@@ -4,29 +4,30 @@ public:
     
     int maxProfit(vector<int>& prices) {
         int n = prices.size() ;
-        vector<vector<int>> dp(n+1 , vector<int>(2, 0)) ;
-        // Base case: no profit after last day
-        dp[n][0] = dp[n][1] = 0;
+        vector<long> ahead(2, 0);
+        vector<long> curr(2, 0);
+        // Base condition: When there are no stocks left, the profit is 0.
+        ahead[0] = ahead[1] = 0;
         
-        // Fill table backwards
-        for(int day = n-1; day >= 0; day--) {
-            for(int state = 0; state < 2; state++) {
+        for(int ind = n-1; ind >= 0; ind--) {
+            for(int buy = 0; buy < 2; buy++) {
                 int profit = 0;
-                if(state == 1) {  // Buy state
-                    profit = max(-prices[day] + dp[day+1][0], dp[day+1][1]);
+                if(buy == 1) {  // Buy state
+                    profit = max(-prices[ind] + ahead[0], 0+ ahead[1]);
                 } else {  // Sell state
-                    profit = max(prices[day] + dp[day+1][1], dp[day+1][0]);
+                    profit = max(prices[ind] + ahead[1], 0+ahead[0]);
                 }
-                dp[day][state] = profit;
+                curr[buy] = profit;
             }
+            ahead = curr;
         }
         
-        return dp[0][1];  // Start in buy state
+        return ahead[1];  
             
     }
 };
 /*
-Time Complexity: O(N*2). Reason: There are two nested loops that account for O(N*2) complexity.
+Time Complexity: O(N*2). Reason: There are two nested loops that account for O(N*2) complexity
 
-Space Complexity: O(N*2). We are using an external array of size ‘N*2’. Stack Space is eliminated.
+Space Complexity: O(1). Reason: We are using an external array of size ‘2’.
 */
