@@ -3,31 +3,25 @@ public:
 // tabulation(bottom - up)
     
     int maxProfit(vector<int>& prices) {
-        int n = prices.size() ;
-        vector<long> ahead(2, 0);
-        vector<long> curr(2, 0);
-        // Base condition: When there are no stocks left, the profit is 0.
-        ahead[0] = ahead[1] = 0;
+        int n = prices.size();
+    
+        // Only need previous day's values
+        int prevBuy = 0;   // Previous day's buy state profit
+        int prevSell = 0;  // Previous day's sell state profit
         
-        for(int ind = n-1; ind >= 0; ind--) {
-            for(int buy = 0; buy < 2; buy++) {
-                int profit = 0;
-                if(buy == 1) {  // Buy state
-                    profit = max(-prices[ind] + ahead[0], 0+ ahead[1]);
-                } else {  // Sell state
-                    profit = max(prices[ind] + ahead[1], 0+ahead[0]);
-                }
-                curr[buy] = profit;
-            }
-            ahead = curr;
+        for(int day = n-1; day >= 0; day--) {
+            int currBuy = max(-prices[day] + prevSell, prevBuy);
+            int currSell = max(prices[day] + prevBuy, prevSell);
+            
+            prevBuy = currBuy;
+            prevSell = currSell;
         }
         
-        return ahead[1];  
-            
+        return prevBuy;  // Return profit starting in buy state
     }
 };
 /*
-Time Complexity: O(N*2). Reason: There are two nested loops that account for O(N*2) complexity
+Time Complexity: O(N)
 
-Space Complexity: O(1). Reason: We are using an external array of size ‘2’.
+Space Complexity: O(1)
 */
