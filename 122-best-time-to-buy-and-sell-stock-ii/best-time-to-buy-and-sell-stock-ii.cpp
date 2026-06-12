@@ -1,36 +1,32 @@
 class Solution {
 public:
-// memoization
-    int dp_mem(int i, int buy, vector<int>& prices, vector<vector<int>>& dp) {
-        int n = prices.size();
-        if(i == n) return 0;  // Base case: no more days
-        
-        if(dp[i][buy] != -1) return dp[i][buy];  // Already computed
-        
-        int profit = 0;
-        if(buy) {
-            // Can buy: choose between buying today or skipping
-            // if bought -> sell(1) , else buy again (0)
-            profit = max(-prices[i] + dp_mem(i+1, 0, prices, dp), 
-                        dp_mem(i+1, 1, prices, dp));
-        } else {
-            // Can sell: choose between selling today or skipping  
-            // if sold -> buy(1) , else sell again(0)
-            profit = max(prices[i] + dp_mem(i+1, 1, prices, dp),
-                        dp_mem(i+1, 0, prices, dp));
-        }
-        
-        return dp[i][buy] = profit;
-    }
+// tabulation(bottom - up)
+    
     int maxProfit(vector<int>& prices) {
         int n = prices.size() ;
-        vector<vector<int>> dp(n , vector<int>(2, -1)) ;
-        return dp_mem(0 , 1 , prices , dp) ;
+        vector<vector<int>> dp(n+1 , vector<int>(2, 0)) ;
+        // Base case: no profit after last day
+        dp[n][0] = dp[n][1] = 0;
         
+        // Fill table backwards
+        for(int day = n-1; day >= 0; day--) {
+            for(int state = 0; state < 2; state++) {
+                int profit = 0;
+                if(state == 1) {  // Buy state
+                    profit = max(-prices[day] + dp[day+1][0], dp[day+1][1]);
+                } else {  // Sell state
+                    profit = max(prices[day] + dp[day+1][1], dp[day+1][0]);
+                }
+                dp[day][state] = profit;
+            }
+        }
+        
+        return dp[0][1];  // Start in buy state
+            
     }
 };
 /*
-Time Complexity: O(N*2). There are N*2 states therefore at max ‘N*2’ new problems will be solved and we are running a for loop for ‘N’ times to calculate the total sum
+Time Complexity: O(N*2). Reason: There are two nested loops that account for O(N*2) complexity.
 
-Space Complexity: O(N*2) + O(N). We are using a recursion stack space(O(N)) and a 2D array ( O(N*2)).
+Space Complexity: O(N*2). We are using an external array of size ‘N*2’. Stack Space is eliminated.
 */
