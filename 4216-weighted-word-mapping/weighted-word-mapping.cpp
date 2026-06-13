@@ -1,7 +1,7 @@
 class Solution {
 public:
     string mapWordWeights(vector<string>& words, vector<int>& weights) {
-
+        /*
         unordered_map<int ,char> hash ;
         
         char c = 'z' ;
@@ -9,6 +9,7 @@ public:
             hash[i] = c ;
             c-- ;  
         }
+        */
         
         string ans ;
         
@@ -21,7 +22,8 @@ public:
                 
             }
 
-            ans += hash[wght % 26] ;
+            int v = wght%26;
+            ans.push_back(char('z'-v)) ;
         }
 
         return ans ;
