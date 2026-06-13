@@ -28,7 +28,7 @@ public:
             ahead = curr;
         }
 
-        return curr[1][k];
+        return ahead[1][k];
     }
 };
 /*
