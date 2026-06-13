@@ -1,37 +1,36 @@
 class Solution {
 public:
-    int maxProfit(int k, vector<int> &prices) {
-        int n = (int)prices.size(), ret = 0, v, p = 0;
-        priority_queue<int> profits;
-        stack<pair<int, int> > vp_pairs;
-        while (p < n) {
-            // find next valley/peak pair
-            for (v = p; v < n - 1 && prices[v] >= prices[v+1]; v++);
-            for (p = v + 1; p < n && prices[p] >= prices[p-1]; p++);
-            // save profit of 1 transaction at last v/p pair, if current v is lower than last v
-            while (!vp_pairs.empty() && prices[v] < prices[vp_pairs.top().first]) {
-                profits.push(prices[vp_pairs.top().second-1] - prices[vp_pairs.top().first]);
-                vp_pairs.pop();
-            }
-            // save profit difference between 1 transaction (last v and current p) and 2 transactions (last v/p + current v/p),
-            // if current v is higher than last v and current p is higher than last p
-            while (!vp_pairs.empty() && prices[p-1] >= prices[vp_pairs.top().second-1]) {
-                profits.push(prices[vp_pairs.top().second-1] - prices[v]);
-                v = vp_pairs.top().first;
-                vp_pairs.pop();
-            }
-            vp_pairs.push(pair<int, int>(v, p));
+    int solve(int ind, int buy, int cap,vector<int>& prices,vector<vector<vector<int>>>& dp) {
+
+        if (ind == prices.size() || cap == 0)
+            return 0;
+
+        if (dp[ind][buy][cap] != -1)
+            return dp[ind][buy][cap];
+
+        if (buy) {
+            return dp[ind][buy][cap] = max(solve(ind + 1, 1, cap, prices, dp),
+                -prices[ind] + solve(ind + 1, 0, cap, prices, dp)
+            );
         }
-        // save profits of the rest v/p pairs
-        while (!vp_pairs.empty()) {
-            profits.push(prices[vp_pairs.top().second-1] - prices[vp_pairs.top().first]);
-            vp_pairs.pop();
+        else {
+            return dp[ind][buy][cap] = max(solve(ind + 1, 0, cap, prices, dp),
+                prices[ind] + solve(ind + 1, 1, cap - 1, prices, dp)
+            );
         }
-        // sum up first k highest profits
-        for (int i = 0; i < k && !profits.empty(); i++) {
-            ret += profits.top();
-            profits.pop();
-        }
-        return ret;
+    }
+
+    int maxProfit(int k, vector<int>& prices) {
+        int n = prices.size();
+
+        vector<vector<vector<int>>> dp(n,vector<vector<int>>(2, vector<int>(k + 1, -1))
+        );
+
+        return solve(0, 1, k, prices, dp);
     }
 };
+/*
+Time Complexity  O(N × 2 × K)
+
+Space Complexity  DP array: O(N × 2 × K) + O(N) (recursion stack)
+*/
