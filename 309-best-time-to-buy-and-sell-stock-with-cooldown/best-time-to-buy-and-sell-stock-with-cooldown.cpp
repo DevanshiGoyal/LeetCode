@@ -3,29 +3,34 @@ public:
     int maxProfit(vector<int>& prices) {
         int n = prices.size();
 
-        vector<vector<int>> dp(n + 2, vector<int>(2, 0));
+        vector<int> front1(2, 0); // dp[ind+1]
+        vector<int> front2(2, 0); // dp[ind+2]
+        vector<int> curr(2, 0);
 
         for (int ind = n - 1; ind >= 0; ind--) {
 
-            dp[ind][1] = max(
-                dp[ind + 1][1],
-                -prices[ind] + dp[ind + 1][0]
+            curr[1] = max(
+                front1[1],
+                -prices[ind] + front1[0]
             );
 
-            dp[ind][0] = max(
-                dp[ind + 1][0],
-                prices[ind] + dp[ind + 2][1]
+            curr[0] = max(
+                front1[0],
+                prices[ind] + front2[1]
             );
+
+            front2 = front1;
+            front1 = curr;
         }
 
-        return dp[0][1];
+        return front1[1];
     }
 };
 
 /*
 Time Complexity: O(N * 2)
-Reason: We iterate through N indices and 2 buy states.
+Reason: We process each day once.
 
-Space Complexity: O(N * 2)
-Reason: DP table of size (N+2) x 2.
+Space Complexity: O(1)
+Reason: Only three arrays of size 2 are used.
 */
