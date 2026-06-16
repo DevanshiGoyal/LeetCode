@@ -1,26 +1,26 @@
 class Solution {
 public:
     string processStr(string s) {
+        string ans;
 
-        string res ;
-        for(char c : s){
-            if(c>='a' && c<='z'){
-                res.push_back(c) ;
+        for (char ch : s) {
+            if (islower(ch)) {
+                ans += ch;
             }
-            else if(c=='#'){
-                res+=res;
+            else if (ch == '*') {
+                if (!ans.empty()) {
+                    ans.pop_back();
+                }
             }
-            else if(c=='%'){
-                reverse(res.begin() , res.end()) ;
+            else if (ch == '#') {
+                ans += ans;
             }
-            else if(!res.empty() && c=='*'){
-                res.pop_back() ;
+            else {
+                reverse(ans.begin(), ans.end());
             }
         }
 
-        return res ;
-
-        
+        return ans;
     }
 };
-
+// tc-->O(n^2)  sc-->O(k)
