@@ -23,4 +23,4 @@ public:
         return ans;
     }
 };
-// tc-->O(n^2)  sc-->O(k)
+// tc-->O(k)  sc-->O(k)
