@@ -1,32 +1,35 @@
 class Solution {
 public:
     string reverseWords(string s) {
-        // using stack 
-        // tc-->O(N)  sc--->O(N)
         stack<string> st;
-        string tmp ="";
-        for(int i = 0 ; i<s.length() ; i++){
-            if(s[i] != ' ') tmp.push_back(s[i]);
-            else{
-                if(tmp!=""){
-                    st.push(tmp);
-                    tmp ="";
+        string temp = "";
+
+        for(int i = 0; i < s.length(); i++) {
+
+            if(s[i] == ' ') {
+                if(!temp.empty()) {
+                    st.push(temp);
+                    temp = "";
                 }
             }
-
-            if(i == s.length()-1){
-                if(tmp != "") st.push(tmp);
+            else {
+                temp.push_back(s[i]);
             }
         }
 
-        s = "";
-        while(!st.empty()){
-            s+=st.top();
+        if(!temp.empty())
+            st.push(temp);
+
+        string ans = "";
+
+        while(!st.empty()) {
+            ans += st.top();
             st.pop();
-            if(!st.empty()){
-                s+=' ';
-            }
+
+            if(!st.empty())
+                ans += " ";
         }
-        return s;
+
+        return ans;
     }
 };
