@@ -4,33 +4,32 @@ public:
         reverse(s.begin(), s.end());
 
         int n = s.size();
-        string ans = "";
+        int idx = 0;
 
-        int i = 0;
-
-        while(i < n) {
+        for(int i = 0; i < n; ) {
 
             while(i < n && s[i] == ' ')
                 i++;
 
             if(i >= n) break;
 
+            if(idx != 0)
+                s[idx++] = ' ';
+
             int j = i;
 
             while(j < n && s[j] != ' ')
                 j++;
 
-            string word = s.substr(i, j - i);
-            reverse(word.begin(), word.end());
+            reverse(s.begin() + i, s.begin() + j);
 
-            if(!ans.empty())
-                ans += " ";
-
-            ans += word;
+            while(i < j)
+                s[idx++] = s[i++];
 
             i = j;
         }
 
-        return ans;
+        s.resize(idx);
+        return s;
     }
 };
