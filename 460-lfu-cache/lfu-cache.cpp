@@ -1,155 +1,85 @@
-class Node{
- public:
-    int key ;
-    int value ;
-    int cnt ;
-    Node* next ;
-    Node* prev ;
-
-    // constructor to initialise 
-    Node(int k , int v){
-        key = k ;
-        value = v ;
-        cnt = 1 ;
-
-    }
-
-};
-
-class List{
-    public:
-    int size ;
-    Node* head;
-    Node* tail ;
-    // constructor
-    List(){
-        // dummy head and tail
-        head = new Node(0 , 0);
-        tail = new Node(0 , 0);
-        head->next = tail ;
-        tail->prev = head ;
-        size = 0 ;
-    }
-    // Function to add in front 
-    void addNode(Node* newNode){
-        Node* temp = head->next ;
-        newNode->next = temp ;
-        head->next = newNode ;
-        newNode->prev = head ;
-        temp->prev = newNode ;
-        size++;
-    }
-
-    void removeNode(Node* delNode){
-        Node* prevNode = delNode-> prev ;
-        Node* nextNode = delNode->next ;
-        prevNode->next = nextNode ;
-        nextNode->prev = prevNode ;
-        size--;
-    }
-
-};
-
-
 class LFUCache {
 public:
-    // hashmap to store key value pairs
-    map<int , Node*> mp;
-    // hashmap to maintain the list having different frequencies
-    map<int , List*> freqlist;
-
-    int maxSizeCache; // Max size of cache
-
-    int minfreq ; // freq of least recently used
-
-    int  currSize ; // current size of cache
-    
-    // capacity of LFU cache
-    int cap;
+    int cap ;
+    int size;
+    unordered_map<int , list<vector<int>>::iterator/*Address*/> mp ;  // key -> address  
+    map<int , list<vector<int>>>  freq ;  // ordered map counter->{key   , value , counter}
 
     LFUCache(int capacity) {
-        maxSizeCache = capacity ;
-        minfreq = 0 ;
-        currSize = 0 ;        
-        
+        cap = capacity  ;
+        size = 0 ;   
     }
 
-    void updateFreq(Node* node){
-        mp.erase(node->key);
-        // update 
-                 // freqlist[freq] gives list --> of that list remove given node 
-        freqlist[node->cnt]->removeNode(node);
+    void makeMostFrequentlyUsed(int key){
+        auto &vec = (*(mp[key]));
 
-        // after removal
-        // If node was the last node having it's frequency
-       if(node->cnt == minfreq && freqlist[node->cnt]->size == 0) {   
-           // Update the minimum frequency --> becomes higher frequency and min freq list becomes empty 
-           minfreq++; 
+        int value = vec[1] ;
+        int f = vec[2];
 
-       }
+        freq[f].erase(mp[key]);
 
-        List* nextHigherFreqList = new List() ;
-        if(freqlist.find(node->cnt + 1) != freqlist.end()){
-            nextHigherFreqList = freqlist[node->cnt + 1] ;
-
+        if(freq[f].empty()){
+            freq.erase(f) ; // empty dll
         }
 
-        node->cnt += 1 ;
-        nextHigherFreqList->addNode(node) ;
-        freqlist[node->cnt] = nextHigherFreqList ;
-        mp[node->key] = node ;
+        f++; // inc f 
+        freq[f].push_front({key , value , f});
+        mp[key] = freq[f].begin();
+
 
 
     }
     
     int get(int key) {
+        if(mp.find(key) == mp.end()){ 
+            return -1 ;} 
 
-        if(mp.find(key) != mp.end()){
-            Node* node  = mp[key] ;
-            int val = node->value ;
-            // it has been accessed so frequency changes 
-            updateFreq(node);
-            return val ;
-        }
-        return -1 ;
+        auto vec = (*(mp[key])) ; // {key , value , counter} address of node (part of list)
+
+        int value = vec[1] ;
+        
+        // recently used update it counter ++ 
+        makeMostFrequentlyUsed(key);
+
+        return value ;
+
         
     }
     
     void put(int key, int value) {
-        // edge case 
-        if(maxSizeCache == 0) return ;
+        if(cap == 0) return ;
 
         if(mp.find(key) != mp.end()){
-            Node* node  = mp[key] ;
+            auto &vec = (*(mp[key])) ; // resolved address
+            vec[1] = value;
 
-            node->value = value ;
-            updateFreq(node);
+             // recently used update it counter ++ 
+            makeMostFrequentlyUsed(key);
         }
-        else{
-            if(currSize == maxSizeCache){
-                List* list = freqlist[minfreq];
-                // delete the LRU
-                mp.erase(list->tail->prev->key) ;
-                // reemove node from list 
-                freqlist[minfreq]->removeNode(list->tail->prev);
-                currSize--;
 
-            }
-            // inserting a new element so it increases
-            currSize++;
+        else if(size < cap){
+            size++;
 
-            // new value needs to be added not there previously 
-            minfreq = 1;
-            List* listfreq = new List() ;
-            if(freqlist.find(minfreq) != freqlist.end()){
-                listfreq = freqlist[minfreq] ;
-            }
+            // fresh h 
+            freq[1].push_front(vector<int>({key , value , 1}));
+            mp[key] = freq[1].begin();
 
-            Node* newNode = new Node(key , value) ;
-            listfreq->addNode(newNode) ;
-            mp[key] = newNode ;
-            freqlist[minfreq] = listfreq ;
-
+        }else{
+            // no space 
+            // Time to remove LFU , or LRU when there is a tie 
+            auto &kaun_sa_list = freq.begin()->second;
+            
+            int key_delete = (kaun_sa_list.back())[0]; //ordered_map ensures that the begin() will be th eleast frequency
+            
+            kaun_sa_list.pop_back();
+            
+            if(kaun_sa_list.empty())
+                freq.erase(freq.begin()->first);
+            
+            freq[1].push_front(vector<int>({key, value, 1}));
+            
+            mp.erase(key_delete);
+            mp[key] = freq[1].begin();
         }
         
     }
@@ -161,5 +91,3 @@ public:
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
-
-auto init = atexit([]() { ofstream("display_runtime.txt") << "0"; });
