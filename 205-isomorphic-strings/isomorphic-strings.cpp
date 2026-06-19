@@ -1,26 +1,26 @@
 class Solution {
 public:
     bool isIsomorphic(string s, string t) {
-        unordered_map<char, char> charMap;
+        unordered_map<char , char> mp ;
 
-        for (int i = 0; i < s.length(); ++i) {
+        for(int i = 0 ; i<s.length() ; i++){
             char sc = s[i];
             char tc = t[i];
 
-            if (charMap.count(sc)) {
-                if (charMap[sc] != tc) {
-                    return false;
+            if(mp.find(sc) != mp.end()){
+                // check if vo previously khin kisi aur char se map toh nhi h 
+                if(mp[sc]!=tc) return false ;
+            }else{
+                // check kisi aur se to nhi map tc aprt from sc
+                for(auto &p : mp){
+                    if(p.second == tc) return false ;
                 }
-            } else {
-                for (auto& pair : charMap) {
-                    if (pair.second == tc) {
-                        return false;
-                    }
-                }
-                charMap[sc] = tc;
+
+                mp[sc] = tc ;
             }
         }
 
-        return true;        
+        return  true ;
+        
     }
 };
