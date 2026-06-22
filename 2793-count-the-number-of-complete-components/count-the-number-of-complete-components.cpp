@@ -1,45 +1,63 @@
 class Solution {
 public:
-    void bfs(int node,vector<vector<int>> &adj,vector<int> &comp,vector<bool> &vis){
-        queue<int> q;
-        q.push(node);
-        vis[node]=true;
 
-        while(!q.empty()){
-            int n=q.front();
-            q.pop();
-            comp.push_back(n);
-            for(auto it:adj[n]){
-                if(!vis[it]){
-                    q.push(it);
-                    vis[it]=true;
-                }
+    void dfs(int u, vector<vector<int>>& adj,
+             vector<int>& vis,
+             vector<int>& nodes,
+             int& edgeCount) {
+
+        vis[u] = 1;
+        nodes.push_back(u);
+
+        edgeCount += adj[u].size();
+
+        for (auto v : adj[u]) {
+            if (!vis[v]) {
+                dfs(v, adj, vis, nodes, edgeCount);
             }
         }
     }
-    int countCompleteComponents(int n, vector<vector<int>>& edges) {
-        vector<vector<int>> adj(n);
-        for(auto it:edges){
-            adj[it[0]].push_back(it[1]);
-            adj[it[1]].push_back(it[0]);
-        }
-        int ans=0;
-        vector<bool> vis(n,false);
-        for(int i=0;i<n;i++){
 
-            if(!vis[i]){
-                vector<int> comp;
-                bfs(i,adj,comp,vis);
-                bool iscomp=true;
-                for(auto it: comp){
-                    if(adj[it].size()!=comp.size()-1){
-                        iscomp=false;
-                        break;
-                    }
+    int countCompleteComponents(int n, vector<vector<int>>& edges) {
+
+        vector<vector<int>> adj(n);
+
+        for (auto& e : edges) {
+            int u = e[0];
+            int v = e[1];
+
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+        }
+
+        vector<int> vis(n, 0);
+
+        int complete = 0;
+
+        for (int i = 0; i < n; i++) {
+
+            if (!vis[i]) {
+
+                vector<int> nodes;
+                int edgeCount = 0;
+
+                dfs(i, adj, vis, nodes, edgeCount);
+
+                int k = nodes.size();
+
+                // divide by 2 because undirected edges counted twice
+                edgeCount /= 2;
+
+                if (edgeCount == (k * (k - 1)) / 2) {
+                    complete++;
                 }
-                if(iscomp)ans++;
             }
         }
-        return ans;
+
+        return complete;
     }
 };
+/*
+DFS traversal: O(V + E)
+Overall: O(n + edges.size())
+*/
