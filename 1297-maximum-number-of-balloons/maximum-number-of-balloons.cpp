@@ -1,26 +1,16 @@
 class Solution {
 public:
     int maxNumberOfBalloons(string text) {
-        int ans = 0;
+        int b = 0, a = 0, l = 0, o = 0, n = 0;
 
-        while (true) {
-            string word = "balloon";
-
-            for (char &c : word) {
-                bool found = false;
-
-                for (char &ch : text) {
-                    if (ch == c) {
-                        ch = '#';
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) return ans;
-            }
-
-            ans++;
+        for (char c : text) {
+            if (c == 'b') b++;
+            else if (c == 'a') a++;
+            else if (c == 'l') l++;
+            else if (c == 'o') o++;
+            else if (c == 'n') n++;
         }
+
+        return min({b, a, l / 2, o / 2, n});
     }
 };
