@@ -1,121 +1,62 @@
-class DSU {
-public:
-
-    vector<int> parent, size;
-
-    DSU(int n) {
-
-        parent.resize(n);
-        size.resize(n, 1);
-
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
-        }
-    }
-
-    int findParent(int node) {
-
-        if (node == parent[node]) {
-            return node;
-        }
-
-        return parent[node] =
-               findParent(parent[node]);
-    }
-
-    void unionBySize(int u, int v) {
-
-        int pu = findParent(u);
-        int pv = findParent(v);
-
-        if (pu == pv) return;
-
-        if (size[pu] < size[pv]) {
-
-            parent[pu] = pv;
-            size[pv] += size[pu];
-
-        } else {
-
-            parent[pv] = pu;
-            size[pu] += size[pv];
-        }
-    }
-};
-
 class Solution {
 public:
+    int find(vector<int>& parent, int x) {
+        return parent[x] = (parent[x] == x) ? x : find(parent, parent[x]);
+    }
 
-    vector<vector<string>>
-    accountsMerge(vector<vector<string>>& accounts) {
+    void Union(vector<int>& parent, vector<int>& rank, int a, int b) {
+        a = find(parent, a);
+        b = find(parent, b);
+        if (a == b) return;
 
+        if (rank[a] < rank[b]) {
+            parent[a] = b;
+        } else if (rank[a] > rank[b]) {
+            parent[b] = a;
+        } else {
+            parent[b] = a;
+            rank[a]++;
+        }
+    }
+
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
         int n = accounts.size();
 
-        DSU dsu(n);
+        // Initialize DSU
+        vector<int> parent(n + 1), rank(n + 1, 0);
+        for (int i = 0; i <= n; i++) parent[i] = i;
 
-        unordered_map<string,int> mailToNode;
-
-        // STEP 1: UNION
+        // Map each email to the first account index it appears in
+        unordered_map<string, int> mp;
         for (int i = 0; i < n; i++) {
-
-            for (int j = 1;
-                 j < accounts[i].size();
-                 j++) {
-
-                string mail = accounts[i][j];
-
-                if (mailToNode.find(mail)
-                    == mailToNode.end()) {
-
-                    mailToNode[mail] = i;
-
+            for (int j = 1; j < accounts[i].size(); j++) {
+                if (!mp.contains(accounts[i][j])) {
+                    mp[accounts[i][j]] = i;
                 } else {
-
-                    dsu.unionBySize(
-                        i,
-                        mailToNode[mail]
-                    );
+                    // Same email found in two accounts → merge them
+                    Union(parent, rank, i, mp[accounts[i][j]]);
                 }
             }
         }
 
-        // STEP 2: GROUP MAILS
-        vector<string> mergedMail[n];
-
-        for (auto it : mailToNode) {
-
-            string mail = it.first;
-            int node = it.second;
-
-            int parent =
-                dsu.findParent(node);
-
-            mergedMail[parent]
-                .push_back(mail);
+        // Group emails by root parent
+        vector<vector<string>> groups(n);
+        for (auto& [email, idx] : mp) {
+            int par = find(parent, idx);
+            groups[par].push_back(email);
         }
 
-        // STEP 3: BUILD ANSWER
+        // Build answer: sort emails and prepend name
         vector<vector<string>> ans;
-
         for (int i = 0; i < n; i++) {
+            if (groups[i].empty()) continue;
 
-            if (mergedMail[i].size() == 0)
-                continue;
+            sort(groups[i].begin(), groups[i].end());
 
-            sort(
-                mergedMail[i].begin(),
-                mergedMail[i].end()
-            );
+            // Get name from the account that owns the first email in this group
+            groups[i].insert(groups[i].begin(), accounts[mp[groups[i][0]]][0]);
 
-            vector<string> temp;
-
-            temp.push_back(accounts[i][0]);
-
-            for (auto &mail : mergedMail[i]) {
-                temp.push_back(mail);
-            }
-
-            ans.push_back(temp);
+            ans.push_back(groups[i]);
         }
 
         return ans;
