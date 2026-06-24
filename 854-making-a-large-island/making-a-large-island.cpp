@@ -1,148 +1,106 @@
-class DSU {
-public:
-
-    vector<int> parent, size;
-
-    DSU(int n) {
-
-        parent.resize(n);
-        size.resize(n, 1);
-
-        for(int i = 0; i < n; i++) {
-            parent[i] = i;
-        }
-    }
-
-    int findParent(int node) {
-
-        if(node == parent[node]) {
-            return node;
-        }
-
-        return parent[node] =
-               findParent(parent[node]);
-    }
-
-    void unionBySize(int u, int v) {
-
-        int pu = findParent(u);
-        int pv = findParent(v);
-
-        if(pu == pv) return;
-
-        if(size[pu] < size[pv]) {
-
-            parent[pu] = pv;
-            size[pv] += size[pu];
-
-        } else {
-
-            parent[pv] = pu;
-            size[pu] += size[pv];
-        }
-    }
-};
-
 class Solution {
+
+// As 0,1 already occupied in matrix so we need to start with index = 2;
+int idx=2;
+
+// HashMap to have mapping between the connected component index and its area
+unordered_map<int,int> mp;
+
+// 4 directions to find out connected 1s
+vector<pair<int,int>> direction{{1,0},{-1,0},{0,1},{0,-1}};
+
+// Globally declaring the area variable which will store the max area
+int area = 0;
+
+// Simple DFS method for assigning connected components an index.
+void dfs(int i,int j,vector<vector<int>> &grid)
+{
+    if(i<0 or i>=size(grid) or j<0 or j>=size(grid) or grid[i][j]!=1)
+        return;
+    mp[idx]++;
+    grid[i][j]=idx;
+    for(auto dir:direction)
+    {
+        dfs(i+dir.first,j+dir.second,grid);
+    }
+}
+
+// Method to mark all the connected components.
+void markAllTheConnectedComponents(vector<vector<int>>& grid)
+{
+    int n=size(grid);
+    mp.clear();
+    idx=2;
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            if(grid[i][j])
+            {
+                dfs(i,j,grid);
+            // Here we are handling the situation when there is no 0 in the matrix.
+                area=max(area,mp[idx]);
+                idx++;
+            }
+        }
+    }
+}
+
+// Method to find out the max area in case of any 0 to be flipped.
+void findMaxArea(vector<vector<int>>& grid)
+{
+    int n=size(grid);
+    queue<pair<int,int>> q;
+    
+//     Push all the {i,j} where grid[i][j]==0 in queue.
+    for(int i=0;i<n;i++)
+    {
+        for(int j=0;j<n;j++)
+        {
+            if(grid[i][j]==0)
+            {
+                q.push({i,j});
+            }
+        }
+    }
+
+    auto isValid = [&](int i,int j){
+        return (i>=0 and i<n and j>=0 and j<n and grid[i][j]!=0);
+    };
+
+    while(!q.empty())
+    {
+        auto front = q.front();
+        q.pop();
+        int i = front.first;
+        int j = front.second;
+        
+        unordered_set<int> vis;
+        int curr = 0;
+        for(auto dir:direction)
+        {
+            int newi = i+dir.first;
+            int newj = j+dir.second;
+            
+            if(isValid(newi,newj) and !vis.count(grid[newi][newj]))
+            {
+                vis.insert(grid[newi][newj]);
+                curr += mp[grid[newi][newj]];
+            }
+        }
+//         its curr+1, why? because we need to consider the flipped 0 also.
+        area = max(curr+1,area);
+    }
+}
+
+
 public:
-
-    int largestIsland(vector<vector<int>>& grid) {
-
-        int n = grid.size();
-
-        DSU dsu(n * n);
-
-        vector<vector<int>> dir = {
-            {1,0},
-            {-1,0},
-            {0,1},
-            {0,-1}
-        };
-
-        // STEP 1: connect all existing 1s
-        for(int r = 0; r < n; r++) {
-
-            for(int c = 0; c < n; c++) {
-
-                if(grid[r][c] == 0)
-                    continue;
-
-                int node = r * n + c;
-
-                for(auto d : dir) {
-
-                    int nr = r + d[0];
-                    int nc = c + d[1];
-
-                    if(nr >= 0 && nc >= 0 &&
-                       nr < n && nc < n &&
-                       grid[nr][nc] == 1) {
-
-                        int adjNode =
-                            nr * n + nc;
-
-                        dsu.unionBySize(
-                            node,
-                            adjNode
-                        );
-                    }
-                }
-            }
-        }
-
-        int ans = 0;
-
-        // STEP 2: try converting each 0
-        for(int r = 0; r < n; r++) {
-
-            for(int c = 0; c < n; c++) {
-
-                if(grid[r][c] == 1)
-                    continue;
-
-                set<int> parents;
-
-                for(auto d : dir) {
-
-                    int nr = r + d[0];
-                    int nc = c + d[1];
-
-                    if(nr >= 0 && nc >= 0 &&
-                       nr < n && nc < n &&
-                       grid[nr][nc] == 1) {
-
-                        int adjNode =
-                            nr * n + nc;
-
-                        parents.insert(
-                            dsu.findParent(adjNode)
-                        );
-                    }
-                }
-
-                int totalSize = 1;
-
-                for(auto parent : parents) {
-                    totalSize +=
-                        dsu.size[parent];
-                }
-
-                ans = max(ans, totalSize);
-            }
-        }
-
-        // STEP 3:
-        // handle all-1s case
-        for(int i = 0; i < n*n; i++) {
-
-            ans = max(
-                ans,
-                dsu.size[
-                    dsu.findParent(i)
-                ]
-            );
-        }
-
-        return ans;
+    int largestIsland(vector<vector<int>>& grid) 
+    {
+//         Step 1: Mark all the connected componentes with index.
+        markAllTheConnectedComponents(grid);
+//         Step 2: Do BFS to find which 0 flip will result in the larger area.
+        findMaxArea(grid);
+        return area;
     }
 };
