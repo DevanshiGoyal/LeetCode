@@ -1,39 +1,39 @@
 class Solution {
 public:
-    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+
+    void dfs(int r , int c , vector<vector<int>> &vis , vector<vector<int>>& image, int newColor , int currColor){
+        int m = image.size() ;
+        int n = image[0].size();
         
-        int n = image.size();
-        int m = image[0].size();
-        
-        int initialC = image[sr][sc];
-        if(initialC == color) return image;
 
-        queue<pair<int,int>> q;
-        q.push({sr, sc});
-        image[sr][sc] = color;
+        if(r<0 || r>=m || c<0 || c>=n || vis[r][c] || image[r][c] != currColor) return ;
 
-        // Dir (up, right, down, left)
-        int drow[] = {-1, 0, 1, 0};
-        int dcol[] = {0, 1, 0, -1};
+        image[r][c] = newColor;
 
-        while(!q.empty()){
-            int row = q.front().first;
-            int col = q.front().second;
-            q.pop();
+        vis[r][c] = 1;
 
-            for(int i = 0; i < 4; i++){
-                int nrow = row + drow[i];
-                int ncol = col + dcol[i];
+        int dr[] = {-1 , 0 , 1 , 0};
+        int dc[] = {0 , 1 , 0 ,-1};
 
-                if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m 
-                   && image[nrow][ncol] == initialC){
-                    
-                    image[nrow][ncol] = color;
-                    q.push({nrow, ncol});
-                }
-            }
+        for(int  i = 0 ; i<4 ; i++){
+            int nr = r + dr[i];
+            int nc = c + dc[i];
+
+            dfs(nr,  nc , vis , image , newColor , currColor);
         }
 
-        return image;
+
+
+    }
+    vector<vector<int>> floodFill(vector<vector<int>>& image, int sr, int sc, int color) {
+
+        int m = image.size() ;
+        int n = image[0].size();
+
+        vector<vector<int>> vis(m , vector<int>(n , 0));
+
+        dfs(sr , sc , vis , image, color,image[sr][sc] );
+        return image ;
+        
     }
 };
