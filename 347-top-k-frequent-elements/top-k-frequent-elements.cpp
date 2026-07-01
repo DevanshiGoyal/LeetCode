@@ -1,41 +1,30 @@
 class Solution {
 public:
     vector<int> topKFrequent(vector<int>& nums, int k) {
-        // O(1) time
-        if (k == nums.size()) {
-            return nums;
-        }
-
-        // 1. Build hash map: element and how often it appears
-        // O(N) time
-        unordered_map<int, int> count_map;
+        unordered_map<int, int> counter;
         for (int n : nums) {
-            count_map[n] += 1;
+            counter[n]++;
         }
-
-        //Initialise a heap with the most frequent elements at the top
-        auto comp = [&count_map](int n1, int n2) { return count_map[n1] > count_map[n2]; };
-        priority_queue<int, vector<int>, decltype(comp)> heap(comp);
-
-        // 2. Keep k top frequent elements in the heap
-        // O(N log k) < O(N log N) time
-        for (pair<int, int> p : count_map) {
-            heap.push(p.first);
-            if (heap.size() > k) heap.pop();
+        
+        vector<vector<int>> freq(nums.size() + 1);
+        for (auto& entry : counter) {
+            freq[entry.second].push_back(entry.first);
         }
-
-        // 3. Build an output array
-        // O(k log k) time
-        vector<int> top(k);
-        for (int i = k - 1; i >= 0; i--) {
-            top[i] = heap.top();
-            heap.pop();
+        
+        vector<int> res;
+        for (int i = freq.size() - 1; i >= 0; i--) {
+            for (int num : freq[i]) {
+                res.push_back(num);
+                if (res.size() == k) {
+                    return res;
+                }
+            }
         }
-        return top;
+        
+        return {};        
     }
 };
 /*
-Time complexity : O(N+Nlogk) if k<N and O(1) in the particular case of N=k. That ensures time complexity to be better than O(NlogN).
-
-Space complexity : O(N+k) to store the hash map with not more N elements and a heap with k elements.
+Time complexity: O(n)
+Space complexity: O(n)
 */
