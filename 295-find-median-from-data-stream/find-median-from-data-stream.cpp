@@ -1,32 +1,47 @@
+
 class MedianFinder {
-private:
-    priority_queue<int> maxHeap; // left side (smaller half)
-    priority_queue<int, vector<int>, greater<int>> minHeap; // right side (larger half)
-
 public:
+// better approach 
+//we avoid repeated sorting
+//addNum	O(n)
+//findMedian	O(1)
+    vector<int> arr;
+
     MedianFinder() {
-        
+
     }
-    
+
     void addNum(int num) {
-        // add to maxHeap
-        maxHeap.push(num);
 
-        // move largest of left to right
-        minHeap.push(maxHeap.top());
-        maxHeap.pop();
+        // Find correct position using binary search
 
-        // balance sizes
-        if (minHeap.size() > maxHeap.size()) {
-            maxHeap.push(minHeap.top());
-            minHeap.pop();
-        }
+        auto it = lower_bound(arr.begin(), arr.end(), num); //O(log n)
+
+        // Insert at correct position
+
+        arr.insert(it, num); //O(n)
     }
-    
+
     double findMedian() {
-        if (maxHeap.size() == minHeap.size()) {
-            return (maxHeap.top() + minHeap.top()) / 2.0;
+
+        int n = arr.size();
+
+        // Odd number of elements
+
+        if (n % 2 == 1) {
+            return arr[n / 2];
         }
-        return maxHeap.top();
+
+        // Even number of elements
+
+        return (arr[n / 2] + arr[n / 2 - 1]) / 2.0;
     }
 };
+
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder* obj = new MedianFinder();
+ * obj->addNum(num);
+ * double param_2 = obj->findMedian();
+ */
