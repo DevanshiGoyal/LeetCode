@@ -1,28 +1,44 @@
 class Solution {
 public:
     vector<double> medianSlidingWindow(vector<int>& nums, int k) {
-        vector<double> res;
-        int n = nums.size();
-        int i=0;
-        int j = k-1;
-        vector<int> temp = {nums.begin(),nums.begin()+k-1};
-        sort(temp.begin(),temp.end());
+        int n=nums.size();
+        multiset<double>left,right;
+        vector<double>res;
+
+        int i=0,j=0;
 
         while(j<n){
-            temp.insert(lower_bound(temp.begin(),temp.end(),nums[j]),nums[j]);
 
-            if(k%2!=0){
-                double median = (double)temp[k / 2];
-                res.push_back(median);
+            if(left.empty() || left.size()<=right.size()){
+                left.insert(nums[j]);
+            }else{
+                right.insert(nums[j]);
             }
-            else{
-                int idx = k / 2;
-                double median1 = (double)temp[idx];
-                double median2 = (double)temp[idx - 1];
-                res.push_back((median1 + median2) / 2);
+
+            if(!right.empty() && *left.rbegin()>*right.begin()){
+                double temp1=*left.rbegin();
+                double temp2=*right.begin();
+                left.erase(left.find(temp1));
+                right.erase(right.find(temp2));
+
+                right.insert(temp1);
+                left.insert(temp2);
             }
-            temp.erase(lower_bound(temp.begin(), temp.end(), nums[i]));
-            i++;
+            if(j-i+1==k){
+                if(left.size()==right.size()){
+                    double x = *left.rbegin() + *right.begin();
+                    res.push_back((double)x/(2*1.0));
+                }else
+                    res.push_back((double)*left.rbegin());
+
+                if(left.find(nums[i])!=left.end()){
+                    left.erase(left.find(nums[i]));
+                }else{
+                    right.erase(right.find(nums[i]));
+                }
+                i++;
+            }
+
             j++;
         }
         return res;
