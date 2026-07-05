@@ -1,38 +1,38 @@
 class Solution {
-    int n;
-    const int MOD = 1e9 + 7;
-    vector<string> board;
-    vector<vector<pair<int,int>>> memo;   // cache; first == INT_MIN means "not solved yet"
-
-    pair<int,int> solve(int i, int j) {
-        if (i < 0 || j < 0)      return {-1, 0};
-        if (board[i][j] == 'X')  return {-1, 0};
-        if (i == 0 && j == 0)    return {0, 1};
-
-        if (memo[i][j].first != INT_MIN) return memo[i][j];   // <-- already computed, reuse
-
-        int val = (board[i][j] == 'S') ? 0 : board[i][j] - '0';
-        pair<int,int> up   = solve(i - 1, j);
-        pair<int,int> left = solve(i, j - 1);
-        pair<int,int> diag = solve(i - 1, j - 1);
-
-        int best = max({up.first, left.first, diag.first});
-        if (best == -1) return memo[i][j] = {-1, 0};
-
-        int ways = 0;
-        if (up.first   == best) ways = (ways + up.second)   % MOD;
-        if (left.first == best) ways = (ways + left.second) % MOD;
-        if (diag.first == best) ways = (ways + diag.second) % MOD;
-
-        return memo[i][j] = {best + val, ways};   // <-- store before returning
-    }
 public:
     vector<int> pathsWithMaxScore(vector<string>& board) {
-        this->board = board;
-        n = board.size();
-        memo.assign(n, vector<pair<int,int>>(n, {INT_MIN, 0}));
-        auto res = solve(n - 1, n - 1);
-        if (res.first == -1) return {0, 0};
-        return {res.first, res.second};
+        int n = board.size();
+        const int MOD = 1e9 + 7;
+
+        // Each entry is {score, ways}; score == -1 means unreachable.
+        vector<pair<int,int>> below(n, {-1, 0}); // the row just below the current one (i+1)
+        vector<pair<int,int>> cur  (n, {-1, 0}); // the row we are filling now (i)
+
+        for (int i = n - 1; i >= 0; --i) {
+            fill(cur.begin(), cur.end(), make_pair(-1, 0));   // clear the row we're about to fill
+            for (int j = n - 1; j >= 0; --j) {
+                if (i == n - 1 && j == n - 1) { cur[j] = {0, 1}; continue; } // S
+                if (board[i][j] == 'X') continue;
+
+                int best = -1;
+                if (i + 1 < n)              best = max(best, below[j].first);
+                if (j + 1 < n)              best = max(best, cur[j + 1].first);
+                if (i + 1 < n && j + 1 < n) best = max(best, below[j + 1].first);
+                if (best == -1) continue;
+
+                long long cnt = 0;
+                if (i + 1 < n              && below[j].first     == best) cnt += below[j].second;
+                if (j + 1 < n              && cur[j + 1].first   == best) cnt += cur[j + 1].second;
+                if (i + 1 < n && j + 1 < n && below[j + 1].first == best) cnt += below[j + 1].second;
+                cnt %= MOD;
+
+                int val = (board[i][j] == 'E') ? 0 : board[i][j] - '0';
+                cur[j] = {best + val, (int)cnt};
+            }
+            below = cur; // the row we just finished becomes "below" for the next row up
+        }
+
+        if (below[0].first == -1) return {0, 0};
+        return {below[0].first, below[0].second};
     }
 };
