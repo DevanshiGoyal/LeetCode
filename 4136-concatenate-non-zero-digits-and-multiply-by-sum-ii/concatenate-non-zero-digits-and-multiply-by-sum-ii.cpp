@@ -26,7 +26,10 @@ public:
 
         
     vector<int> sumAndMultiply(string s, vector<vector<int>>& queries) {
-
+        /*
+        Time: O(n + q log n)
+        Space: O(n)
+        */
         const int mod = 1e9 + 7;
         int n = s.size();
 
