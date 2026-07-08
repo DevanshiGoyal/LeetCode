@@ -1,92 +1,62 @@
 class Solution {
 public:
-    // brute force O(n*q)--> TLE
-    /*
     vector<int> sumAndMultiply(string s, vector<vector<int>>& queries) {
-        vector<int> ans ;
-        int mod = 1e9 + 7 ;
-        for(auto &it : queries){
-            int l = it[0] ;
-            int r = it[1];
-            long long x = 0 , sum = 0 ;
-            for(int i = l ; i<=r ; i++){
-                if(s[i] != '0' ){
-                    int d = s[i] - '0' ;
-                    sum+=d ;
-                    x = (x*10 + d)%mod ;
-                }
-            }
-            
-            long long a = (x * sum) % mod;
-            ans.push_back(a) ;
-        }
-
-        return ans ;
-        */
-
-        
-    vector<int> sumAndMultiply(string s, vector<vector<int>>& queries) {
-        /*
-        Time: O(n + q log n)
-        Space: O(n)
-        */
-        const int mod = 1e9 + 7;
+        const long long MOD = 1000000007LL;
         int n = s.size();
 
-        vector<int> pos;
-        vector<int> digit;
+        vector<int> nonZeroCount(n + 1, 0);
 
-        // Store non-zero digits and their positions
+        vector<int> digits;
+
         for (int i = 0; i < n; i++) {
+            nonZeroCount[i + 1] = nonZeroCount[i];
+
             if (s[i] != '0') {
-                pos.push_back(i);
-                digit.push_back(s[i] - '0');
+                nonZeroCount[i + 1]++;
+                digits.push_back(s[i] - '0');
             }
         }
 
-        int k = digit.size();
+        int k = digits.size();
 
-        // powers of 10
-        vector<long long> pow10(k + 1, 1);
-        for (int i = 1; i <= k; i++)
-            pow10[i] = (pow10[i - 1] * 10) % mod;
+        vector<long long> prefixValue(k + 1, 0);
 
-        // prefix concatenated number
-        vector<long long> prefNum(k + 1, 0);
-        for (int i = 0; i < k; i++)
-            prefNum[i + 1] = (prefNum[i] * 10 + digit[i]) % mod;
+        vector<long long> prefixSum(k + 1, 0);
 
-        // prefix digit sum
-        vector<long long> prefSum(k + 1, 0);
-        for (int i = 0; i < k; i++)
-            prefSum[i + 1] = prefSum[i] + digit[i];
+        vector<long long> power10(k + 1, 1);
 
-        vector<int> ans;
+        for (int i = 0; i < k; i++) {
+            prefixValue[i + 1] = (prefixValue[i] * 10 + digits[i]) % MOD;
 
-        for (auto &q : queries) {
+            prefixSum[i + 1] = prefixSum[i] + digits[i];
 
-            int L = q[0];
-            int R = q[1];
-
-            int left = lower_bound(pos.begin(), pos.end(), L) - pos.begin();
-            int right = upper_bound(pos.begin(), pos.end(), R) - pos.begin() - 1;
-
-            if (left > right) {
-                ans.push_back(0);
-                continue;
-            }
-
-            int len = right - left + 1;
-
-            long long x = (prefNum[right + 1]
-                          - (prefNum[left] * pow10[len]) % mod
-                          + mod) % mod;
-
-            long long sum = prefSum[right + 1] - prefSum[left];
-
-            ans.push_back((x * sum) % mod);
+            power10[i + 1] = (power10[i] * 10) % MOD;
         }
 
-        return ans;
+        vector<int> answer;
+        answer.reserve(queries.size());
+
+        for (const auto& query : queries) {
+            int l = query[0];
+            int r = query[1];
+
+            int left = nonZeroCount[l];
+
+            int right = nonZeroCount[r + 1];
+
+            int len = right - left;
+
+            long long x = (
+                prefixValue[right]
+                - (prefixValue[left] * power10[len]) % MOD
+                + MOD
+            ) % MOD;
+
+            long long sum = prefixSum[right] - prefixSum[left];
+
+            answer.push_back((int)((x * sum) % MOD));
+        }
+
+        return answer;
     }
 };
