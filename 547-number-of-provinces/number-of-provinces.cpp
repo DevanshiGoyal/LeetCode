@@ -1,43 +1,40 @@
 class Solution {
 public:
-    void dfs(int node , vector<vector<int>>& adj , vector<int>&vis){
-        vis[node] = 1 ;
+    int n ;
+    int findCircleNum(vector<vector<int>>& isConnected) {
+        // bfs implementation
 
-        for(auto it : adj[node]){
-            if(!vis[it]){
-                dfs(it , adj , vis) ;
+        n = isConnected.size() ;
+        vector<int> vis(n , 0) ;
+        int cnt = 0 ;
+        for(int i = 0 ; i<n ; i++){
+            if(!vis[i]){
+                cnt++;
+                bfs(i , isConnected , vis);
             }
         }
 
+        return cnt ;
+
+        
     }
 
-    
-    int findCircleNum(vector<vector<int>>& isConnected) {
-        int n = isConnected.size() ;
+    private :
+    void bfs(int node ,vector<vector<int>>& isConnected , vector<int>& vis){
 
-        // adj list 
-        vector<vector<int>> adj(n) ;
-        for(int u = 0 ; u<n ; u++){
-            for(int v = 0 ; v<n ; v++){
-                if(isConnected[u][v]==1 && u!=v){
-                    adj[u].push_back(v) ;
-                    adj[v].push_back(u) ;
+        queue<int> q ;
+        q.push(node) ;
+        vis[node] = 1 ;
+        while(!q.empty()){
+            int cur  = q.front() ;
+            q.pop() ;
+            for(int nei = 0 ; nei<n ; nei++){
+                if(isConnected[cur][nei] == 1 && !vis[nei]){
+                    q.push(nei) ;
+                    vis[nei] = true ;
                 }
             }
-           
         }
-        int count = 0 ;
-        vector<int> vis(n , 0) ;
-        for(int i = 0  ; i<n ; i++){
-            if(!vis[i]){
-                count++;
-                dfs(i , adj , vis);
-                
-            }
-        }
-        return count ;
+
     }
 };
-
-// sc  ---> O(n) + O(n)  (visited array + rescursion stack space)
-// tc---->  O(n)  + o(v+2e) 
