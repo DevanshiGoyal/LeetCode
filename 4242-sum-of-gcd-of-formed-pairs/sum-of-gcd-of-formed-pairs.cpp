@@ -1,38 +1,27 @@
 class Solution {
 public:
-    /*
-    int gcd(int a, int b) {
-        if (b == 0)
-            return a;
-        return gcd(b, a % b);
-    }
-    */
-    int gcd(int a, int b) {
-        while (b) {
-            int t = a % b;
-            a = b;
-            b = t;
-        }
-        return a;
-    }
-
     long long gcdSum(vector<int>& nums) {
         int n = nums.size();
-        vector<int> prefixGcd(n);
 
-        int mx = 0;
-        for (int i = 0; i < n; i++) {
-            mx = max(mx, nums[i]);
-            prefixGcd[i] = gcd(nums[i], mx);
+        vector<int> prefixGcd;
+        int maxEl = -1;
+        for(int i = 0; i < n; i++) {
+            maxEl = max(maxEl, nums[i]);
+            prefixGcd.push_back(__gcd(nums[i], maxEl));
         }
 
-        sort(prefixGcd.begin(), prefixGcd.end());
+        sort(begin(prefixGcd), end(prefixGcd));
 
-        long long ans = 0;
-        for (int i = 0; i < n / 2; i++) {
-            ans += gcd(prefixGcd[i], prefixGcd[n - 1 - i]);
+        long long result = 0;
+        int i = 0;
+        int j = n-1;
+
+        while(i < j) {
+            result += __gcd(prefixGcd[i], prefixGcd[j]);
+            i++;
+            j--;
         }
 
-        return ans;
+        return result;
     }
 };
