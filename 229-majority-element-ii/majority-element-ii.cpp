@@ -1,24 +1,56 @@
 class Solution {
 public:
     vector<int> majorityElement(vector<int>& nums) {
-        // brute force approach 
-        // using hashmap 
-        unordered_map<int , int> mp ;
         int n = nums.size() ;
+        int count1 = 0  , count2 = 0 ;
+        int candidate1 = 0 , candidate2 = 0 ;
+
         for(int i = 0 ; i<n ; i++){
-            mp[nums[i]]++;
-        }
-        vector<int> ans ;
-        n = n/3 ;
-        for(auto e : mp){
-            if(e.second > n ){
-                ans.push_back(e.first);
+            if(count1 == 0 && nums[i]!=candidate2){
+                count1 = 1;
+                candidate1 = nums[i] ;
+            }
+            else if (count2 == 0 && nums[i] != candidate1) {
+                count2 = 1;
+                candidate2 = nums[i];
+            } 
+
+            else if (candidate1 == nums[i]){
+                count1++;
+            }
+            else if (candidate2 == nums[i]){
+                count2++;
+            }else{
+                count1--;
+                count2--;
             }
 
         }
-        return ans ;
+
+        
+        vector<int> result;
+        int threshold = nums.size() / 3; // Threshold for majority element
+        
+        // Second pass to count occurrences of the potential majority elements.
+        count1 = 0, count2 = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (candidate1 == nums[i]) {
+                count1++;
+            } else if (candidate2 == nums[i]) {
+                count2++;
+            }
+        }
+        
+
+        // Check if the counts of potential majority elements are greater than n/3 and add them to the result.
+        if (count1 > threshold) {
+            result.push_back(candidate1);
+        }
+        if (count2 > threshold) {
+            result.push_back(candidate2);
+        }
+
+        return result;
         
     }
 };
-
-//TC-->O(2*N)=O(N)  SC-->O(N)
