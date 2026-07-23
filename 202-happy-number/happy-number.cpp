@@ -9,9 +9,15 @@ public:
         return ans;
     }
     bool isHappy(int n) {
-        while(n>4){
+        unordered_set<int> seen;
+        while(n!=1){
+            if(seen.count(n)==1){
+                return false;
+            }else{
+                seen.insert(n);
+            }
             n=squareSum(n);
         }
-        return (n == 1); 
+        return true;
     }
 };
