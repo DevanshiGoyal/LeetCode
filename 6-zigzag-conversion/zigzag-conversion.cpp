@@ -1,33 +1,30 @@
-
-
 class Solution {
 public:
-
     string convert(string s, int numRows) {
-    
-    if(numRows <= 1) return s;
 
-    vector<string>v(numRows, ""); 
+        if (numRows == 1 || numRows >= s.size())
+            return s;
 
-    int j = 0, dir = -1;
+        vector<string> rows(numRows);
 
-    for(int i = 0; i < s.length(); i++)
-    {
+        int currRow = 0;
+        bool goingDown = false;
 
-        if(j == numRows - 1 || j == 0) dir *= (-1); 
-		 
-        v[j] += s[i];
+        for (char c : s) {
 
-        if(dir == 1) j++;
+            rows[currRow] += c;
 
-        else j--;
-    }
+            if (currRow == 0 || currRow == numRows - 1)
+                goingDown = !goingDown;
 
-    string res;
+            currRow += goingDown ? 1 : -1;
+        }
 
-    for(auto &it : v) res += it; 
+        string ans;
 
-    return res;
+        for (string row : rows)
+            ans += row;
 
+        return ans;
     }
 };
