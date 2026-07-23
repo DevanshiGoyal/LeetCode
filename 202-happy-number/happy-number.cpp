@@ -9,14 +9,14 @@ public:
         return ans;
     }
     bool isHappy(int n) {
-        unordered_set<int> seen;
-        while(n!=1){
-            if(seen.count(n)==1){
+        int slow=n;
+        int fast=n;
+        while(n!=1&&fast!=1){
+            slow=squareSum(slow);
+            fast=squareSum(squareSum(fast));
+            if(slow==fast&&fast!=1){
                 return false;
-            }else{
-                seen.insert(n);
             }
-            n=squareSum(n);
         }
         return true;
     }
