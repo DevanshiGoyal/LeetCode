@@ -18,7 +18,7 @@ public:
                 len--;
             }
 
-            //if(len>0 && sum>maxSum) maxSum = sum ;
+            if(len>0 && sum>maxSum) maxSum = sum ;
         }
         return maxSum ;
         
