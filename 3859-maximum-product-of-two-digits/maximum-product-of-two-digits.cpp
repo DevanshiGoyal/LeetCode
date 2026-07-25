@@ -1,17 +1,21 @@
 class Solution {
 public:
     int maxProduct(int n) {
-        string num = to_string(n);
-        int m = num.size();
-        int maxProd = INT_MIN;
+        // optimal 
+        // we need to max digits for max prod 
+        int largest = 0, secondLargest = 0;
 
-        for (int i = 0; i < m; i++) {
-            for (int j = i + 1; j < m; j++) {
-                int prod = (num[i] - '0') * (num[j] - '0');
-                maxProd = max(maxProd, prod);
+        while (n > 0) {
+            int digit = n % 10;
+            if (digit >= largest) {
+                secondLargest = largest;
+                largest = digit;
+            } else if (digit > secondLargest) {
+                secondLargest = digit;
             }
+            n /= 10;
         }
 
-        return maxProd;
+        return largest * secondLargest;
     }
 };
