@@ -1,16 +1,23 @@
 class Solution {
-public:
+public: 
     bool checkValidString(string s) {
-        int cmin = 0, cmax = 0;
-        for (char c : s) {
-            if (c == '(')
-                cmax++, cmin++;
-            if (c == ')')
-                cmax--, cmin = max(cmin - 1, 0);
-            if (c == '*')
-                cmax++, cmin = max(cmin - 1, 0);
-            if (cmax < 0) return false;
+        int minOpen = 0; 
+        int maxOpen = 0;
+
+        for(char ch : s){
+            if (ch == '('){
+                minOpen++;
+                maxOpen++;
+            }else if(ch == ')'){
+                maxOpen--;
+                minOpen--;
+            }else{
+                maxOpen++;
+                minOpen--;
+            }
+            if(maxOpen < 0) return false;
+            if(minOpen < 0) minOpen = 0;
         }
-        return cmin == 0;
+        return minOpen == 0;
     }
 };
