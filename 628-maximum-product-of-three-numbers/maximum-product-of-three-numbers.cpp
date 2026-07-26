@@ -1,33 +1,10 @@
 class Solution {
 public:
     int maximumProduct(vector<int>& nums) {
-        long long max1 = LLONG_MIN;
-        long long max2 = LLONG_MIN;
-        long long max3 = LLONG_MIN;
+        int n = nums.size();
+        sort(begin(nums), end(nums));
 
-        long long min1 = LLONG_MAX;
-        long long min2 = LLONG_MAX;
-
-        for (int num : nums) {
-            if (num > max1) {
-                max3 = max2;
-                max2 = max1;
-                max1 = num;
-            } else if (num > max2) {
-                max3 = max2;
-                max2 = num;
-            } else if (num > max3) {
-                max3 = num;
-            }
-
-            if (num < min1) {
-                min2 = min1;
-                min1 = num;
-            } else if (num < min2) {
-                min2 = num;
-            }
-        }
-
-        return max(max1 * max2 * max3, max1 * min1 * min2);
+        return max(nums.back() * nums[n - 2] * nums[n - 3], nums.back() * nums[0] * nums[1]);
     }
 };
+//O(nlogn)
