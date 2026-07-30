@@ -9,24 +9,24 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+//T.C : O(n)
+//S.C : O(1) (Ignoging recursion stack space)
 class Solution {
 public:
     int rangeSumBST(TreeNode* root, int low, int high) {
-        int sum = 0 ;
-
-        if(!root) return 0 ;
-        if(root->val <=high && root->val>=low){
-            sum+=root->val;
-        }
-        if(root->left){
-            sum+=rangeSumBST(root->left , low , high);
-
-        }
-        if(root->right){
-            sum+=rangeSumBST(root->right , low , high);
-
-        }
-        return sum ;
+        if(!root)
+            return 0;
         
+        //Within Range
+        if(root->val >= low && root->val <= high) {
+            return root->val + rangeSumBST(root->left, low, high) + rangeSumBST(root->right, low, high);
+        }
+        
+        //When outside the range (Less than low) - Go right
+        if(root->val < low)
+            return rangeSumBST(root->right, low, high);
+
+        //When outside the range (Greater than high) - Go left
+        return rangeSumBST(root->left, low, high);
     }
 };
