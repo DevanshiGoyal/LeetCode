@@ -9,34 +9,85 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+
+ /*
+//Approach-1 (Using O(n) space)
+//T.C : O(n)
+//S.C : O(n)
 class Solution {
 public:
-    int maxFreq = 0, currFreq = 0, precursor = INT_MIN;
-    vector<int> res;
-
-    vector<int> findMode(TreeNode *root)
-    {
-        inorderTraversal(root);
-        return res;
+    unordered_map<int, int> mp;
+    
+    void dfs(TreeNode* root) {
+        if(!root)
+            return;
+        
+        dfs(root->left);
+        mp[root->val]++;
+        dfs(root->right);
     }
+    
+    vector<int> findMode(TreeNode* root) {
+        dfs(root);
+        
+        vector<int> result;
+        int maxFreq = 0;
+        
+        for(auto &it : mp) {
+            if(it.second > maxFreq) {
+                maxFreq = it.second;
+                result = {};
+                result.push_back(it.first);
+            } else if (it.second == maxFreq) {
+                result.push_back(it.first);
+            }
+        }
+        
+        return result;
+        
+    }
+};
+*/
 
-    void inorderTraversal(TreeNode *root)
-    {
-        if (root == NULL) return; // Stop condition
-        inorderTraversal(root->left); // Traverse left subtree
-        if (precursor == root->val) currFreq++;
-        else currFreq = 1;
-        if (currFreq > maxFreq)
-        {// Current node value has higher frequency than any previous visited
-            res.clear();
-            maxFreq = currFreq;
-            res.push_back(root->val);
+//Approach-2 (without Using extra space)
+//T.C : O(n)
+//S.C : O(1) (stack space is not considered)
+class Solution {
+public:
+    int currNum    = 0;
+    int currStreak = 0;
+    int maxStreak  = 0;
+    vector<int> result;
+    
+    void dfs(TreeNode* root) {
+        if(!root)
+            return;
+        
+        dfs(root->left);
+        
+        if(root->val == currNum) {
+            currStreak++;
+        } else {
+            currNum    = root->val;
+            currStreak = 1;
         }
-        else if (currFreq == maxFreq)
-        {// Current node value has a frequency equal to the highest of previous visited
-            res.push_back(root->val);
+        
+        if(currStreak > maxStreak) {
+            result = {};
+            maxStreak = currStreak;
         }
-        precursor = root->val; // Update the precursor
-        inorderTraversal(root->right); // Traverse right subtree
+        
+        if(currStreak == maxStreak) {
+            result.push_back(root->val);
+        }
+        
+        dfs(root->right);
+        
+    }
+    
+    vector<int> findMode(TreeNode* root) {
+        dfs(root);
+        
+        return result;
     }
 };
