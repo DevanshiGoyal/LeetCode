@@ -11,73 +11,25 @@
  */
 class Solution {
 public:
-    vector<int> inorder;
-    vector<int> sumgreater;
-    int idx = 0;
+    int sum = 0;
 
-    void inorderTraversal(TreeNode* root){
-        if(!root) return;
+    void solve(TreeNode* root){
+        if(root == nullptr) return;
 
-        inorderTraversal(root->left);
-        inorder.push_back(root->val);
-        inorderTraversal(root->right);
-    }
+        solve(root->right);
 
-    void update(TreeNode* root){
-        if(!root) return;
+        sum += root->val;
+        root->val = sum;
 
-        update(root->left);
-        root->val = sumgreater[idx++];
-        update(root->right);
+        solve(root->left);
     }
 
     TreeNode* bstToGst(TreeNode* root) {
-        inorderTraversal(root);
-
-        int n = inorder.size();
-        sumgreater.resize(n);
-
-        sumgreater[n-1] = inorder[n-1];
-
-        for(int i = n-2; i >= 0; i--){
-            sumgreater[i] = sumgreater[i+1] + inorder[i];
-        }
-
-        update(root);
-
+        solve(root);
         return root;
     }
 };
 /*
-Time Complexity
-inorderTraversal(root) → O(n)
-Computing the sumgreater array → O(n)
-update(root) traversal → O(n)
-
-Total:
-
-O(n)+O(n)+O(n)=O(n)
-	​
-
-Space Complexity
-inorder vector stores all node values → O(n)
-sumgreater vector stores suffix sums → O(n)
-Recursive call stack during traversals → O(h), where h is the height of the tree.
-Balanced BST: O(log n)
-Skewed BST: O(n)
-
-Overall auxiliary space:
-
-O(n)+O(h)
-	​
-
-
-Since O(n) dominates O(h), the overall space complexity is typically written as:
-
-O(n)
-	​
-
-Summary
-Time Complexity: O(n)
-Space Complexity: O(n) (or more precisely O(n + h))
+Time: O(n)
+Space: O(h) (recursion stack)
 */
