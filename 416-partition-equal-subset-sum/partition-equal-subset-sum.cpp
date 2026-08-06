@@ -1,46 +1,38 @@
 class Solution {
 public:
-    // space optimised
-    //T(n): O(N * K)
-    //S(n): O(K)
-    bool checkSubsequenceSum(int n, vector<int>& arr, int k) {
-        vector<bool> prev(k + 1, false), curr(k + 1, false);
-        prev[0] = true;
-    
-        if (arr[0] <= k)
-            prev[arr[0]] = true;
-    
-        for (int i = 1; i < n; i++) {
-            curr[0] = true;
-            for (int target = 1; target <= k; target++) {
-                bool notTake = prev[target];
-                bool take = false;
-                if (arr[i] <= target)
-                    take = prev[target - arr[i]];
-                curr[target] = take || notTake;
-            }
-            prev = curr;
+    bool recursion(int ind , int target , vector<int>&nums , vector<vector<int>>& dp){
+        if(target==0) return true ;
+
+        if(ind==0) return nums[0] == target;
+
+        if(dp[ind][target] != -1) return dp[ind][target];
+        bool notTake = recursion(ind-1 , target , nums , dp);
+        bool take = false ;
+        if(nums[ind] <= target){
+            take = recursion(ind-1 , target-nums[ind] , nums , dp);
         }
-    
-        return prev[k];
-    
+
+        return dp[ind][target] = notTake || take ;
     }
-    // tc---> O(n) 
     bool canPartition(vector<int>& nums) {
-        int totSum = 0 ;
-        int n = nums.size() ;
-        for(int i = 0 ; i<nums.size() ; i++){
-            totSum+= nums[i] ;
+        int n = nums.size();
 
-        }
-        if(totSum % 2 !=0) return false ;
+        int sum = 0 ;
         
-        int target = totSum / 2 ;
+        for(int i = 0 ; i<n ; i++){
+            sum+=nums[i];
+        }
 
-        return checkSubsequenceSum(n , nums , target) ;
-
-
-
+        
+        if(sum%2 == 1) return false ;
+        else{
+            int target = sum/2 ;
+            vector<vector<int>> dp (n , vector<int>(target+1 , -1));
+        
+            return recursion(n-1 , target , nums , dp);
+    
+        }
+        
         
     }
 };
