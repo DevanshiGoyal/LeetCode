@@ -1,78 +1,45 @@
-class DSU {
-public:
-
-    vector<int> parent, size;
-
-    DSU(int n) {
-
-        parent.resize(n);
-        size.resize(n, 1);
-
-        for (int i = 0; i < n; i++) {
-            parent[i] = i;
-        }
-    }
-
-    int findParent(int node) {
-
-        if (node == parent[node]) {
-            return node;
-        }
-
-        return parent[node] =
-               findParent(parent[node]);
-    }
-
-    void unionBySize(int u, int v) {
-
-        int pu = findParent(u);
-        int pv = findParent(v);
-
-        if (pu == pv) return;
-
-        if (size[pu] < size[pv]) {
-
-            parent[pu] = pv;
-            size[pv] += size[pu];
-
-        } else {
-
-            parent[pv] = pu;
-            size[pu] += size[pv];
-        }
-    }
-};
-
 class Solution {
 public:
+    void dfs(int node , vector<vector<int>>& adj  , vector<vector<int>>& stones , vector<int>& vis){
+        vis[node] = 1 ;
+
+        for(auto it : adj[node]){
+            if(!vis[it]){
+                dfs(it , adj , stones , vis);
+            }
+        }
+    }
 
     int removeStones(vector<vector<int>>& stones) {
-
         int n = stones.size();
 
-        DSU dsu(n);
+        vector<vector<int>>adj(n);
 
-        for (int i = 0; i < n; i++) {
+        vector<int> vis(n , 0);
 
-            for (int j = i + 1; j < n; j++) {
+        for(int i = 0 ; i<n ; i++){
+            for(int j= i+1 ; j<n ; j++){
 
-                if (stones[i][0] == stones[j][0] ||
-                    stones[i][1] == stones[j][1]) {
-
-                    dsu.unionBySize(i, j);
+                if(stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]){
+                    adj[i].push_back(j);
+                    adj[j].push_back(i);
                 }
+
             }
         }
 
-        int components = 0;
+        int comp = 0 ;
 
-        for (int i = 0; i < n; i++) {
-
-            if (dsu.findParent(i) == i) {
-                components++;
+        for(int i = 0 ; i<n ; i++){
+            if(!vis[i]){
+                comp++;
+                dfs(i , adj , stones , vis);
             }
         }
 
-        return n - components;
+        return n - comp ;
+
+    
+        
     }
 };
