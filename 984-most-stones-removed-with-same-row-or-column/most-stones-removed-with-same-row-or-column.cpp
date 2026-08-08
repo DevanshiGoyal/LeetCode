@@ -1,45 +1,65 @@
-class Solution {
+class DSU{
 public:
-    void dfs(int node , vector<vector<int>>& adj  , vector<vector<int>>& stones , vector<int>& vis){
-        vis[node] = 1 ;
 
-        for(auto it : adj[node]){
-            if(!vis[it]){
-                dfs(it , adj , stones , vis);
-            }
+    vector<int> parent ;
+    vector<int> size ;
+    DSU(int n){
+        parent.resize(n);
+        size.resize(n , 1);
+
+        for(int i = 0; i<n ; i++){
+            parent[i] = i ;
         }
     }
 
+
+    int find(int node){
+        if(parent[node] == node) return node ;
+
+        return parent[node] = find(parent[node]);
+    }
+
+    void unionBySize(int u , int v){
+        int pu = find(u);
+        int pv = find(v);
+
+        if(pu==pv) return ;
+
+        if(size[pu] < size[pv]){
+            parent[pu] = pv ;
+            size[pv]+= size[pu];
+        }else{
+            parent[pv] = pu ;
+            size[pu]+= size[pv];
+        }
+    }
+};
+class Solution {
+public:
     int removeStones(vector<vector<int>>& stones) {
         int n = stones.size();
 
-        vector<vector<int>>adj(n);
-
-        vector<int> vis(n , 0);
+        DSU dsu(n);
 
         for(int i = 0 ; i<n ; i++){
-            for(int j= i+1 ; j<n ; j++){
+            for(int j = i+1 ; j<n ; j++){
+                if(stones[i][0] == stones[j][0]  ||stones[i][1] == stones[j][1] ){
+                    dsu.unionBySize(i , j);
 
-                if(stones[i][0] == stones[j][0] || stones[i][1] == stones[j][1]){
-                    adj[i].push_back(j);
-                    adj[j].push_back(i);
                 }
-
             }
         }
 
         int comp = 0 ;
 
         for(int i = 0 ; i<n ; i++){
-            if(!vis[i]){
+            if(dsu.find(i) == i){
                 comp++;
-                dfs(i , adj , stones , vis);
             }
         }
 
-        return n - comp ;
-
-    
+        return n - comp;
+        
         
     }
 };
