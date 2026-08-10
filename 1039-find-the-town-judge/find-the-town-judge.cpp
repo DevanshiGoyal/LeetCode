@@ -4,20 +4,19 @@ public:
 
         if(trust.size() == 0 && n==1) return n ;
 
-        vector<int> count(n+1);
-        for(auto person : trust){
-            int u = person[0];
-            int v = person[1];
+        vector<int> out(n+1,0),in(n+1,0);
+        for(auto p : trust){
+            int u = p[0];
+            int  v = p[1];
 
-            count[v]++;
-            count[u]--;
-
+            in[v]++;
+            out[u]++;
         }
-
-        for(int i = 1 ; i<count.size() ; i++){
-            if(count[i] ==  n-1) return i ;
+        for(int i=1; i<=n; i++){
+            if(out[i] == 0 && in[i] == n-1)
+                return i;
         }
-        return -1 ;
+        return -1;
         
     }
 };
