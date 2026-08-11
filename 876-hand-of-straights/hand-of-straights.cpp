@@ -1,52 +1,37 @@
 class Solution {
 public:
     bool isNStraightHand(vector<int>& hand, int groupSize) {
+        int n = hand.size();
 
-        if (hand.size() % groupSize != 0)
-            return false;
+        if(n%groupSize != 0) return false ;
 
-        unordered_map<int, int> freq;
+        map<int , int> f ;
 
-        for (int card : hand)
-            freq[card]++;
+        for(int c : hand){
+            f[c]++;
+        }  
+        while(!f.empty()){
+            int smallest = f.begin()->first ;
 
-        priority_queue<pair<int, int>,
-                       vector<pair<int, int>>,
-                       greater<pair<int, int>>> minHeap;
+            for(int j = 0; j<groupSize; j++){
 
-        for (auto &it : freq)
-            minHeap.push({it.first, it.second});
+                int c = smallest+j;
 
-        queue<pair<int, int>> pending;
-
-        while (!minHeap.empty()) {
-
-            int prev = -1;
-
-            for (int cnt = 0; cnt < groupSize; cnt++) {
-
-                if (minHeap.empty())
+                if(f.find(c) == f.end()){
                     return false;
+                }
+                f[c]--;
 
-                auto [card, f] = minHeap.top();
-                minHeap.pop();
-
-                if (prev != -1 && card != prev + 1)
-                    return false;
-
-                prev = card;
-                f--;
-
-                if (f > 0)
-                    pending.push({card, f});
-            }
-
-            while (!pending.empty()) {
-                minHeap.push(pending.front());
-                pending.pop();
+                if(f[c] == 0){
+                    f.erase(c);
+                }
             }
         }
+        return true ;
 
-        return true;
     }
 };
+/*
+Time Complexity: O(N log N)
+Space Complexity: O(N)
+*/
