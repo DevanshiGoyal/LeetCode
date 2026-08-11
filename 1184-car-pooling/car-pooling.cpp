@@ -1,26 +1,26 @@
-//Approach-1 (Using Line Sweep)
+//Approach-2 (Using Difference Array Technique)
 //T.C : O(n)
-//S.C : O(n) to store events in map
+//S.C : O(1001) ~= O(1)
 class Solution {
 public:
     bool carPooling(vector<vector<int>>& trips, int capacity) {
-        map<int, int> events;
+        int diff[1001] = {0};
 
         for(auto &trip : trips) {
             int count = trip[0];
             int start = trip[1];
             int end   = trip[2];
 
-            events[start] += count;
-            events[end] -= count;
+            diff[start] += count;
+            diff[end]   -= count;
         }
 
-        int passCount = 0;
+        int cumSum = 0;
 
-        for(auto &it : events) {
-            passCount += it.second;
+        for(int i = 0; i < 1001; i++) {
+            cumSum += diff[i];
 
-            if(passCount > capacity)
+            if(cumSum > capacity)
                 return false;
         }
 
