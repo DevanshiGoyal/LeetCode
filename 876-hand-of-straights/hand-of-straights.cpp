@@ -1,30 +1,52 @@
 class Solution {
 public:
-   bool findSuccessors(vector<int>& hand, int groupSize, int i, int n) {
-        int next = hand[i] + 1;
-        hand[i] = -1;  // Mark as used
-        int count = 1;
-        i += 1;
-        while (i < n && count < groupSize) {
-            if (hand[i] == next) {
-                next = hand[i] + 1;
-                hand[i] = -1;
-                count++;
-            }
-            i++;
-        }
-        return count == groupSize;
-    }
-
     bool isNStraightHand(vector<int>& hand, int groupSize) {
-        int n = hand.size();
-        if (n % groupSize != 0) return false;
-        std::sort(hand.begin(), hand.end());
-        for (int i = 0; i < n; i++) {
-            if (hand[i] >= 0) {
-                if (!findSuccessors(hand, groupSize, i, n)) return false;
+
+        if (hand.size() % groupSize != 0)
+            return false;
+
+        unordered_map<int, int> freq;
+
+        for (int card : hand)
+            freq[card]++;
+
+        priority_queue<pair<int, int>,
+                       vector<pair<int, int>>,
+                       greater<pair<int, int>>> minHeap;
+
+        for (auto &it : freq)
+            minHeap.push({it.first, it.second});
+
+        queue<pair<int, int>> pending;
+
+        while (!minHeap.empty()) {
+
+            int prev = -1;
+
+            for (int cnt = 0; cnt < groupSize; cnt++) {
+
+                if (minHeap.empty())
+                    return false;
+
+                auto [card, f] = minHeap.top();
+                minHeap.pop();
+
+                if (prev != -1 && card != prev + 1)
+                    return false;
+
+                prev = card;
+                f--;
+
+                if (f > 0)
+                    pending.push({card, f});
+            }
+
+            while (!pending.empty()) {
+                minHeap.push(pending.front());
+                pending.pop();
             }
         }
+
         return true;
     }
 };
