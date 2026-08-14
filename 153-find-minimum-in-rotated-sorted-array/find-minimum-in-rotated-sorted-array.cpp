@@ -9,9 +9,11 @@ public:
         while (left <= right) {
             int mid = left + (right - left) / 2;
 
+            /*
             if(nums[left] <= nums[right]){
                 ans = min(ans , nums[left]);
             }
+            */
 
             if (nums[mid] <= nums[right]) {
                 ans = min(ans , nums[mid]);
