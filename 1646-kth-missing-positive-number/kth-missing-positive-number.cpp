@@ -2,14 +2,25 @@ class Solution {
 public:
     int findKthPositive(vector<int>& arr, int k) {
 
-        for (int i = 0; i < arr.size(); i++) {
-            if (arr[i] <= k) {
-                k++;  // If current number is less than or equal to k, increment k
-            } else {
-                break; // Stop when we reach a number greater than k
+        int low = 1;
+        int high = arr.size() + k;
+
+        while(low <= high) {
+
+            int mid = low + (high - low) / 2;
+
+            int count = upper_bound(arr.begin(), arr.end(), mid) - arr.begin();
+
+            int missing = mid - count;
+
+            if(missing < k) {
+                low = mid + 1;
+            }
+            else {
+                high = mid - 1;
             }
         }
-        return k;  // Return the final value of k which is the missing number
-        
+
+        return low;
     }
 };
