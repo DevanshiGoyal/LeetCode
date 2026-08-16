@@ -1,23 +1,22 @@
 class Solution {
 public:
+    // using rescursion ---> TLE
+    // memoization ---> MLE
+    // tabulation 
+    
+
     int climbStairs(int n) {
-
-        if(n == 1 || n == 2) return n;
-
-        //vector<int> dp(n + 1, -1);
-
-        int prev2 = 0;
-        int prev1 = 1;
-        int curr = 2;
-        int next ;
-
-        for(int i = 3; i <= n; i++){
-            next = curr + prev1 ; 
-            prev1 = curr ;
-            curr = next ;
-
+        if (n == 0 || n == 1) {
+            return 1;
         }
 
-        return next ;
+        vector<int> dp(n+1);
+        dp[0] = dp[1] = 1;
+        
+        for (int i = 2; i <= n; i++) {
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+        return dp[n];
     }
+
 };
