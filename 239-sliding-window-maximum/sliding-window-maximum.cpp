@@ -1,28 +1,36 @@
 class Solution {
 public:
     vector<int> maxSlidingWindow(vector<int>& nums, int k) {
-        // brute force - TLE
-        vector<int> ans ;
-        
-        deque<int> dq ;  // store indices 
+        int n = nums.size();
 
-        for(int i = 0 ; i<nums.size() ;i++){
-            if(!dq.empty() && dq.front()<=i-k){
-                dq.pop_front();
+        deque<int> maxies;
+        vector<int> res(n - k + 1);
+        int idx = 0;
+        int i = 0;
+        int j = 0;
+
+        while (j < n) {
+            
+            // from right remove elements smaller than current element
+            while (!maxies.empty() && maxies.back() < nums[j]) {
+                maxies.pop_back();
             }
 
-            while (!dq.empty() && nums[dq.back()] < nums[i]) {
-                dq.pop_back();
-            }
+            // now push current element
+            maxies.push_back(nums[j]);
 
-            dq.push_back(i);
-
-            if(i>= k-1){
-                ans.push_back(nums[dq.front()]);
+            // if it hits window size
+            if (j - i + 1 == k) {
+                res[idx++] = maxies.front();
+                // window is going to move => element at the start of window useless => if its in deque => remove it
+                if (maxies.front() == nums[i]) {
+                    maxies.pop_front();
+                }
+                i++;
             }
+            j++;
         }
 
-        return ans ;
-        
+        return res;
     }
 };
