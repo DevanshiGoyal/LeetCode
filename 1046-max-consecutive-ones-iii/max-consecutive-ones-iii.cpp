@@ -11,17 +11,14 @@ public:
                 zc++ ;
             }
 
-            while(zc>k){
+            if(zc>k){
                 if(nums[l]==0){
                     zc--;
                 }
                 l++;
             }
-            maxlen = max(maxlen , r-l+1) ;
+            if(zc<=k) maxlen = max(maxlen , r-l+1) ;
             r++ ;
-            
-
-            
         }
         
         return maxlen ;
@@ -30,3 +27,6 @@ public:
         
     }
 };
+
+// optimial 
+//O(n)  O(1)
