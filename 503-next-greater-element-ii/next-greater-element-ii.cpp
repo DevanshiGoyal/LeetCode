@@ -1,26 +1,25 @@
 class Solution {
 public:
     vector<int> nextGreaterElements(vector<int>& nums) {
-        // brute force approach
-        int n = nums.size(); 
-        vector<int> ans(n , -1);
-        
-        for(int i = 0 ; i<n ; i++){
-            
-            for(int j = 1 ; j<n ; j++ ){
-                // for searching circularly to find new number 
-                int idx = (i+j)%n;
-                if(nums[idx]> nums[i]){
-                    ans[i]= nums[idx];
-                 
-                    break ;
+        int n = nums.size();
+        stack<int> st ;
+
+        for(int i = 2*n-1 ; i>=0 ; i--){
+            int j = i%n;
+            while(!st.empty() && nums[j] >= st.top()) st.pop();
+            int temp = nums[j];
+            if(i<n){
+                if(st.empty()){
+                    nums[j] = -1 ;
+                }else{
+                    nums[j] = st.top();
                 }
-
             }
-  
-
+            st.push(temp);
         }
-        return ans ;
+        return nums;
         
     }
 };
+
+
