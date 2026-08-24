@@ -1,35 +1,39 @@
 class Solution {
 public:
     string reverseWords(string s) {
-        reverse(s.begin(), s.end());
+        string output = "";
+        string temp = "";
 
-        int n = s.size();
-        int idx = 0;
+        int n = s.length();
 
-        for(int i = 0; i < n; ) {
+        for (int i = n - 1; i >= 0; i--) {
 
-            while(i < n && s[i] == ' ')
-                i++;
+            if (s[i] != ' ') {
+                temp += s[i];
+            }
+            else {
+                if (!temp.empty()) {
+                    reverse(temp.begin(), temp.end());
 
-            if(i >= n) break;
+                    if (!output.empty())
+                        output += " ";
 
-            if(idx != 0)
-                s[idx++] = ' ';
-
-            int j = i;
-
-            while(j < n && s[j] != ' ')
-                j++;
-
-            reverse(s.begin() + i, s.begin() + j);
-
-            while(i < j)
-                s[idx++] = s[i++];
-
-            i = j;
+                    output += temp;
+                    temp = "";
+                }
+            }
         }
 
-        s.resize(idx);
-        return s;
+        // Add the first word if it exists
+        if (!temp.empty()) {
+            reverse(temp.begin(), temp.end());
+
+            if (!output.empty())
+                output += " ";
+
+            output += temp;
+        }
+
+        return output;
     }
 };
