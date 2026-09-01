@@ -1,25 +1,23 @@
 class Solution {
 public:
-    vector<vector<int>> result;
-    
-    // Backtracking
-    void permutation(vector<int> &nums,int i,int n){
-        if(i==n){
-            result.push_back(nums);
-            return ;
+    void getPermutations(vector<int> &nums, vector<vector<int>> &ans, int idx)
+    {
+        if (idx == nums.size())
+        {
+            ans.push_back(nums);
+            return;
         }
-
-        for(int j=i;j<=n;j++){
-            swap( nums[i],nums[j]);
-            permutation(nums,i+1,n);
-            swap( nums[i],nums[j]);
-        }
+        for (int i = idx; i < nums.size(); i++)
+        {
+            swap(nums[idx], nums[i]);
+            getPermutations(nums, ans, idx + 1);
+            swap(nums[idx], nums[i]);
+        } 
     }
-    
-    vector<vector<int>> permute(vector<int>& nums) {
-        
-        permutation(nums,0,nums.size()-1);
-        
-        return result;
+    vector<vector<int>> permute(vector<int>& nums) 
+    {
+        vector<vector<int>> ans;
+        getPermutations(nums, ans, 0);
+        return ans;
     }
 };
