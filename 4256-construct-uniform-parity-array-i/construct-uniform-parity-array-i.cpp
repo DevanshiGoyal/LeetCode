@@ -1,32 +1,26 @@
 class Solution {
 public:
     bool uniformArray(vector<int>& nums1) {
-        int n = nums1.size();
-        bool odd = true, even = true;
+        // return 1;
+        int odd = 0;
+        int even = 0;
 
-        for(int i=0; i<n; i++){
-            if(nums1[i]%2==0){
-                // check for odd
-                bool valid = false;
-                for(int j=0; j<n; j++){
-                    if(i!=j && abs(nums1[i]-nums1[j])%2==1){
-                        valid = true;
-                    }
-                }
-                if(!valid) odd = false;
-            }
-            else {
-                // check for even
-                bool valid = false;
-                for(int j=0; j<n; j++){
-                    if(i!=j && abs(nums1[i]-nums1[j])%2==0){
-                        valid = true;
-                    }
-                }
-                if(!valid) even = false;
+        int n = nums1.size();
+
+        for (int x : nums1) {
+            if (x % 2 == 0) {
+                even++;
+            } else {
+                odd++;
             }
         }
 
-        return odd | even;
+        if (even == n || odd == n) {
+            return true;
+        } else if (even >= 1 && odd >= 1) {
+            return true;
+        }
+
+        return false;
     }
 };
