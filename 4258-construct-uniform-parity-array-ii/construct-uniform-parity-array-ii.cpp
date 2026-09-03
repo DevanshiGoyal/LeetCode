@@ -1,19 +1,17 @@
 class Solution {
 public:
-    bool uniformArray(vector<int>& nums1) {
-        // Find the minimum element in the array
-        int mn = *min_element(nums1.begin(), nums1.end());
-        
-        // If the minimum element is odd, we can make all elements odd
-        if (mn % 2 == 1) {
-            return true;
-        } else {
-            // If the minimum is even, all elements MUST already be even
-            for (int i = 0; i < nums1.size(); i++) {
-                if (nums1[i] % 2 == 1) {
-                    return false; // Found an odd number, impossible to convert
-                }
-            }
+    bool uniformArray(vector<int>& nums) {
+        int smallestOdd = INT_MAX;
+        for (int num : nums){
+            if (num % 2 == 1)
+                smallestOdd = min(smallestOdd, num);
+        }
+        // Already all even
+        if (smallestOdd == INT_MAX) return true;
+        // Check whether every even number can become odd
+        for (int num : nums){
+            if (num % 2 == 0 && num <= smallestOdd)
+                return false;
         }
         return true;
     }
