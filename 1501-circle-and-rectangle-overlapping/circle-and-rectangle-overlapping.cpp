@@ -1,13 +1,31 @@
-#include <cmath>
 class Solution {
 public:
-    bool checkOverlap(int r, int x, int y, int x1, int y1, int x2, int y2) {
-        bool inRect = (x>=x1-r && x<=x2+r) && (y>=y1-r && y<=y2+r);
-        bool inSec1 = ((x<=x1 && x>=x1-r) && (y>=y2 && y<=y2+r)) && (pow(x1-x,2)+pow(y2-y,2)-pow(r,2) > 0);
-        bool inSec2 = ((x<=x2+r && x>=x2) && (y>=y2 && y<=y2+r)) && (pow(x2-x,2)+pow(y2-y,2)-pow(r,2) > 0);
-        bool inSec3 = ((x<=x1 && x>=x1-r) && (y>=y1-r && y<=y1)) && (pow(x1-x,2)+pow(y1-y,2)-pow(r,2) > 0);
-        bool inSec4 = ((x<=x2+r && x>=x2) && (y>=y1-r && y<=y1)) && (pow(x2-x,2)+pow(y1-y,2)-pow(r,2) > 0);
+    bool checkOverlap(int radius, int xCenter, int yCenter,
+                      int x1, int y1, int x2, int y2) {
 
-        return inRect && !inSec1 && !inSec2 && !inSec3 && !inSec4;
+        // Find the closest horizontal distance to the rectangle
+        int closestXDistance = calculateDistanceToRange(x1, x2, xCenter);
+
+        // Find the closest vertical distance to the rectangle
+        int closestYDistance = calculateDistanceToRange(y1, y2, yCenter);
+
+        // If distance to the closest point <= radius, they overlap
+        return closestXDistance * closestXDistance
+             + closestYDistance * closestYDistance
+             <= radius * radius;
+    }
+
+private:
+    int calculateDistanceToRange(int rangeStart, int rangeEnd, int point) {
+
+        // Point is already inside the range
+        if (rangeStart <= point && point <= rangeEnd) {
+            return 0;
+        }
+
+        // Otherwise, return distance to the nearest boundary
+        return point < rangeStart
+            ? rangeStart - point
+            : point - rangeEnd;
     }
 };
