@@ -3,13 +3,13 @@ public:
     int reverseDegree(string s) {
 
         int sum =0 ; 
-        for(int i = 1 ; i<=s.length() ; i++){
-            char c = s[i-1];
+        for(int i = 0 ; i<s.length() ; i++){
+            char c = s[i];
 
             int revVal = 26 - (c-'a');
-            cout<<revVal<<endl;
-            int pos = i ;
-            cout<<pos<<endl;
+          
+            int pos = i+1 ;
+            
             sum+= revVal*pos;
         }
 
