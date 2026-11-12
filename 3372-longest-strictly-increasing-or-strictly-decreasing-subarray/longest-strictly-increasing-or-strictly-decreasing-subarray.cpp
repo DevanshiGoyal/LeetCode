@@ -1,29 +1,29 @@
-//approach 1: Brute Force
+//approach 2 comparing the adjacent ele in array
 class Solution {
 public:
     int longestMonotonicSubarray(vector<int>& nums) {
-        int inc_ans=0,inc_dec=0;
-        for(int i=0;i<nums.size();i++){
-            int mx=1;
-            for(int j=i+1;j<nums.size();j++)
-            {
-                if(nums[j-1]<nums[j])mx++;
-                else break;
+        int inc_len=1;
+        int dec_len=1,inc_mx=1,dec_mx=1;
+        for(int i=1;i<nums.size();i++){
+            if(nums[i-1]<nums[i]){
+                inc_mx++;
             }
-            inc_ans=max(mx,inc_ans);
-        }
-
-        for(int i=0;i<nums.size()-1;i++){
-            int mx=1;
-            for(int j=i+1;j<nums.size();j++)
-            {
-                if(nums[j-1]>nums[j])mx++;
-                else break;
+            else{
+                inc_len=max(inc_len,inc_mx);
+                inc_mx=1;
             }
-            inc_dec=max(mx,inc_dec);
+            if(nums[i-1]>nums[i]){
+                dec_mx++;
+            }
+            else{
+                dec_len=max(dec_len,dec_mx);
+                dec_mx=1;
+            }
         }
-        return max(inc_ans,inc_dec);
+        
+        inc_len=max(inc_len,inc_mx);
+        dec_len=max(dec_len,dec_mx);
+        
+        return max(inc_len,dec_len);
     }
 };
-
-
