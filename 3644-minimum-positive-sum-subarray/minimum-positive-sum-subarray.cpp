@@ -1,26 +1,34 @@
 class Solution {
 public:
+// brute(n*r)
+// optimal O(n)
     int minimumSumSubarray(vector<int>& nums, int l, int r) {
         int n = nums.size();
+
+        vector<int> prefix(n + 1, 0);
+
+        //prefix sum
+        for (int i = 0; i < n; i++) {
+            prefix[i + 1] = prefix[i] + nums[i];
+        }
+
         int minSum = INT_MAX;
 
         for (int i = 0; i < n; i++) {
-            int sum = 0;
+            for (int len = l; len <= r; len++) {
+                int j = i + len;
+                if (j > n)
+                    break;
 
-            for (int j = i; j < n && j < i + r; j++) {
-                sum += nums[j];
+                int sum = prefix[j] - prefix[i];
 
-                int len = j - i + 1;
-                // check kr rhi hu sari condition
-                if (len >= l && len <= r && sum > 0) {
+                if (sum > 0) {
                     minSum = min(minSum, sum);
                 }
             }
         }
 
-        if(minSum==INT_MAX){
-            return -1 ;
-        }
+        if(minSum == INT_MAX) return -1 ;
         return minSum;
     }
 };
