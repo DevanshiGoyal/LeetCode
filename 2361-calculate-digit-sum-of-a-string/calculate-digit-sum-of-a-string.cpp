@@ -1,28 +1,18 @@
 class Solution {
 public:
-// brute 
     string digitSum(string s, int k) {
-        string b;
         while (s.size() > k) {
-            b.clear();
-            int sum = 0, count = 0;
-            
-            for (char c : s) {
-                sum += c - '0';
-                count++;
-                
-                if (count == k) {
-                    b += to_string(sum);
-                    sum = 0;
-                    count = 0;
+            int write_idx = 0;
+            for (int i = 0; i < s.size(); i += k) {
+                int sum = 0;
+                for (int j = i; j < i + k && j < s.size(); j++) {
+                    sum += s[j] - '0';
+                }
+                for (char c : to_string(sum)) {
+                    s[write_idx++] = c;
                 }
             }
-            
-            if (count > 0) {
-                b += to_string(sum);
-            }
-            
-            s = std::move(b);
+            s.resize(write_idx);
         }
         return s;
     }
