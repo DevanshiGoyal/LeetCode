@@ -8,6 +8,5 @@ public:
         ans = min(ans, nums[n]-nums[2]);
         ans = min(ans, nums[n-2]-nums[0]);
         return ans;
-    }
-    
+    } 
 };
