@@ -1,9 +1,14 @@
 class Solution {
 public:
     bool canAliceWin(int n) {
-        return (n >= 10 && n < 19) ||
-               (n >= 27 && n < 34) ||
-               (n >= 40 && n < 45) ||
-               (n >= 49 && n <= 50);
+        bool AliceTurn = true;
+        for(int i = 10; i > 0; i--){
+            if(n - i < 0){
+                return(!AliceTurn);
+            }
+            n-=i;
+            AliceTurn = !AliceTurn;
+        }
+        return true;
     }
 };
